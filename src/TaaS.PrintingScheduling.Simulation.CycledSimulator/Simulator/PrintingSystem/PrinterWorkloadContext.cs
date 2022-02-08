@@ -53,6 +53,13 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.PrintingS
                     "Not equal to current scheduled job.", 
                     nameof(completedJob));
             }
+            /*
+            if (CurrentJob.TimeSlot.Finish != simulationContext.CurrentCycle)
+            {
+                throw new InvalidOperationException("Estimated finish time and actual aren't equal. " + 
+                    $"Planned: '{CurrentJob.TimeSlot.Finish}', actual: '{simulationContext.CurrentCycle}'.");
+            }
+            */
 
             CurrentJob = null;
         }

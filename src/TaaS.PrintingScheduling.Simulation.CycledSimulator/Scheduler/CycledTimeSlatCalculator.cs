@@ -10,9 +10,12 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Scheduler
             PrinterSpecification printer, JobSpecification<long> job, long lastJobFinishTime)
         {
             var startTime = lastJobFinishTime + 1;
-            var jobDuration = (long)Math.Ceiling(job.Volume / printer.PrintingSpeed);
+            
+            var jobVolume = job.Dimension.Volume;
+            var printingVolumePerCycle = printer.Resolution * printer.Resolution * printer.PrintingSpeed;
+            var jobCyclesDuration = (long)Math.Ceiling(jobVolume / printingVolumePerCycle);
 
-            return new ExecutionTimeSlot<long>(startTime, startTime + jobDuration);
+            return new ExecutionTimeSlot<long>(startTime, startTime + jobCyclesDuration - 1);
         }
     }
 }

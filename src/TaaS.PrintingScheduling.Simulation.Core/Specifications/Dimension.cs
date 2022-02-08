@@ -31,6 +31,8 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Specifications
         public double Y { get; }
         
         public double Z { get; }
+
+        public double Volume => X * Y * Z;
         
         public override int GetHashCode() => (X, Y, Z).GetHashCode();
         

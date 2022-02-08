@@ -12,7 +12,7 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.Managemen
         {
             Specification = specification;
 
-            _remainingVolume = specification.Volume;
+            _remainingVolume = specification.Dimension.Volume;
         }
 
         public bool IsComplete => _remainingVolume == 0;
@@ -33,8 +33,10 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.Managemen
             {
                 ExecutionStartTime = cycledContext.CurrentCycle;
             }
+
+            var printingVolumePerCycle = printer.Resolution * printer.Resolution * printer.PrintingSpeed;
             
-            var newRemainingVolume =_remainingVolume - printer.PrintingSpeed;
+            var newRemainingVolume =_remainingVolume - printingVolumePerCycle;
             if (newRemainingVolume <= 0)
             {
                 ExecutionFinishTime = cycledContext.CurrentCycle;

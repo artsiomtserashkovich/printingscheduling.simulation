@@ -7,14 +7,12 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Specifications
     {
         public JobSpecification(
             int id,
-            double resolution, 
-            double volume, 
+            double resolution,
             Dimension dimension,
             TTime incomingTime)
         {
             Id = id;
             Resolution = resolution;
-            Volume = volume;
             Dimension = dimension;
             IncomingTime = incomingTime;
         }
@@ -22,9 +20,7 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Specifications
         public int Id { get; }
 
         public double Resolution { get; }
-        
-        public double Volume { get; }
-        
+
         public Dimension Dimension { get; }
 
         public TTime IncomingTime { get; }
