@@ -8,6 +8,10 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.Managemen
         JobSpecification<long> Specification { get; }
         
         bool IsComplete { get; }
+        
+        public long? ExecutionStartTime { get; }
+        
+        public long? ExecutionFinishTime { get; }
 
         void Execute(PrinterSpecification printer, ICycledSimulationContext simulationContext);
     }

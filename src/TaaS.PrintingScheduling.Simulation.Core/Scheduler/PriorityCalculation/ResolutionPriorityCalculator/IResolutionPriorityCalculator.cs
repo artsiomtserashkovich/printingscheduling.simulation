@@ -1,4 +1,4 @@
-﻿namespace TaaS.PrintingScheduling.Simulation.Core.PriorityCalculation.ResolutionPriorityCalculator
+﻿namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.PriorityCalculation.ResolutionPriorityCalculator
 {
     internal interface IResolutionPriorityCalculator
     {

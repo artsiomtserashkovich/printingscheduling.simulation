@@ -19,19 +19,14 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Specifications
             IncomingTime = incomingTime;
         }
         
-        [DataMember(Name = "id")]
         public int Id { get; }
 
-        [DataMember(Name = "resolution")]
         public double Resolution { get; }
         
-        [DataMember(Name = "volume")]
         public double Volume { get; }
         
-        [DataMember(Name = "dimension")]
         public Dimension Dimension { get; }
 
-        [DataMember(Name = "incoming")]
         public TTime IncomingTime { get; }
     }
 }

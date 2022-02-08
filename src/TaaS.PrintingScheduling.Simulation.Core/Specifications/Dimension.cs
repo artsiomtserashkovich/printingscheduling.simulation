@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace TaaS.PrintingScheduling.Simulation.Core
+namespace TaaS.PrintingScheduling.Simulation.Core.Specifications
 {
     [DataContract]
     public struct Dimension
@@ -26,13 +26,10 @@ namespace TaaS.PrintingScheduling.Simulation.Core
             Z = z;
         }
         
-        [DataMember(Name = "x")]
         public double X { get; }
         
-        [DataMember(Name = "y")]
         public double Y { get; }
         
-        [DataMember(Name = "z")]
         public double Z { get; }
         
         public override int GetHashCode() => (X, Y, Z).GetHashCode();

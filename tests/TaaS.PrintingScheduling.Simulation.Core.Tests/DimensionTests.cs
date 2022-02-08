@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
+using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 
 namespace TaaS.PrintingScheduling.Simulation.Core.Tests
 {

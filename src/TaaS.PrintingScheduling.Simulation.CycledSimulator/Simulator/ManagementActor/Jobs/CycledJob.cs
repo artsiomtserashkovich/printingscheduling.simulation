@@ -1,15 +1,14 @@
 ﻿using System;
 using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.CycledEngine.Context;
-using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.PrinterActor;
 
 namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.ManagementActor.Jobs
 {
-    public class CycledCycledJob : ICycledJob
+    public class CycledJob : ICycledJob
     {
         private double _remainingVolume;
 
-        public CycledCycledJob(JobSpecification<long> specification)
+        public CycledJob(JobSpecification<long> specification)
         {
             Specification = specification;
 

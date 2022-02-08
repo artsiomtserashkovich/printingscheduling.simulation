@@ -17,16 +17,12 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Specifications
             Resolution = resolution;
         }
         
-        [DataMember(Name = "id")]
         public int Id { get; }
         
-        [DataMember(Name = "speed")]
         public double PrintingSpeed { get; }
         
-        [DataMember(Name = "dimension")]
         public Dimension PrintingDimension { get; }
         
-        [DataMember(Name = "resolution")]
         public double Resolution { get; }
     }
 }

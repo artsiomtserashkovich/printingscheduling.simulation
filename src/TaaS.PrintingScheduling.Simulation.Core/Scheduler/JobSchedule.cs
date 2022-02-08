@@ -6,15 +6,12 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler
     {
         public JobSpecification<TTime> Job { get; }
 
-        public TTime ScheduledStartTime { get; }
-        
-        public TTime ExpectedFinishTime { get; }
+        public ExecutionTimeSlot<TTime> TimeSlot { get; }
 
-        public JobSchedule(JobSpecification<TTime> job, TTime start, TTime finish)
+        public JobSchedule(JobSpecification<TTime> job, ExecutionTimeSlot<TTime> timeSlot)
         {
             Job = job;
-            ScheduledStartTime = start;
-            ExpectedFinishTime = finish;
+            TimeSlot = timeSlot;
         }
     }
 }

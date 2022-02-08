@@ -8,14 +8,14 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.CycledEng
     public class CycledSimulationEngine : ISimulationEngine
     {
         private readonly ICycledManagementActor _managementActor;
-        private readonly IReadOnlyCollection<ICycledPrinterActor> _printingExecutors;
+        private readonly IReadOnlyCollection<ICycledPrinterActor> _printerActors;
         
         public CycledSimulationEngine(
             ICycledManagementActor managementActor,
-            IReadOnlyCollection<ICycledPrinterActor> printingExecutors)
+            IReadOnlyCollection<ICycledPrinterActor> printerActors)
         {
             _managementActor = managementActor;
-            _printingExecutors = printingExecutors;
+            _printerActors = printerActors;
         }
         
         public void Simulate() 
@@ -25,7 +25,7 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.CycledEng
             while (!_managementActor.IsComplete)
             {
                 _managementActor.ExecuteManagingCycle(executionContext);
-                foreach (var worker in _printingExecutors)
+                foreach (var worker in _printerActors)
                 {
                     worker.ExecuteCycle(executionContext);
                 }

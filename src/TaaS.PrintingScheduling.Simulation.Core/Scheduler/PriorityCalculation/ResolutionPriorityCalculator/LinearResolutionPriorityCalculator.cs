@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace TaaS.PrintingScheduling.Simulation.Core.PriorityCalculation.ResolutionPriorityCalculator
+namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.PriorityCalculation.ResolutionPriorityCalculator
 {
-    internal class LinearResolutionPriorityCalculator : IResolutionPriorityCalculator
+    public class LinearResolutionPriorityCalculator : IResolutionPriorityCalculator
     {
         private const int FloatPartPrecision = 3;
         private const double ExpectedComparingPrecision = 0.01;

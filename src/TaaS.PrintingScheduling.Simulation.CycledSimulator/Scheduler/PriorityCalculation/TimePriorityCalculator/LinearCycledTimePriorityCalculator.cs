@@ -1,7 +1,7 @@
 ﻿using System;
-using TaaS.PrintingScheduling.Simulation.Core.PriorityCalculation.TimePriorityCalculator;
+using TaaS.PrintingScheduling.Simulation.Core.Scheduler.PriorityCalculation.TimePriorityCalculator;
 
-namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.PriorityCalculation.TimePriorityCalculator
+namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Scheduler.PriorityCalculation.TimePriorityCalculator
 {
     public class LinearTimePriorityCalculator : ITimePriorityCalculator<int>
     {

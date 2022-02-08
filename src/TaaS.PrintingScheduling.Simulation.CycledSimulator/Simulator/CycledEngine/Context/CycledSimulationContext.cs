@@ -1,6 +1,4 @@
-﻿using TaaS.PrintingScheduling.Simulation.ConsoleTool.Simulator.CycledEngine;
-
-namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.CycledEngine.Context
+﻿namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.CycledEngine.Context
 {
     public class CycledSimulationContext : ICycledSimulationContext
     {

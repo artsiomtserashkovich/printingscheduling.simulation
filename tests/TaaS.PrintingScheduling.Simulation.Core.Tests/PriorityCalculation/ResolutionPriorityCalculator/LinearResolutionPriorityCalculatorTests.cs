@@ -1,6 +1,7 @@
 using System;
 using FluentAssertions;
 using NUnit.Framework;
+using TaaS.PrintingScheduling.Simulation.Core.Scheduler.PriorityCalculation.ResolutionPriorityCalculator;
 
 namespace TaaS.PrintingScheduling.Simulation.Core.Tests.PriorityCalculation.ResolutionPriorityCalculator
 {

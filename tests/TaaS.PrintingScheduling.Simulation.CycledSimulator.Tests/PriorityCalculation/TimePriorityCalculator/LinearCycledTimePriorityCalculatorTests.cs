@@ -1,7 +1,7 @@
 ﻿using System;
 using FluentAssertions;
 using NUnit.Framework;
-using TaaS.PrintingScheduling.Simulation.CycledSimulator.PriorityCalculation.TimePriorityCalculator;
+using TaaS.PrintingScheduling.Simulation.CycledSimulator.Scheduler.PriorityCalculation.TimePriorityCalculator;
 
 namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Tests.PriorityCalculation.TimePriorityCalculator
 {

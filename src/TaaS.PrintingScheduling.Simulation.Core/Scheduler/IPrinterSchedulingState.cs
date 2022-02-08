@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 
 namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler
 {
-    public interface IPrinterExecutionState<TTime> where TTime : struct
+    public interface IPrinterSchedulingState<TTime> where TTime : struct
     {
         public PrinterSpecification Printer { get; }
         
-        public TTime CurrentJobFinishTime { get; }
-        
-        public IReadOnlyCollection<JobSchedule<TTime>> Schedules { get; }
+        public Queue<JobSchedule<TTime>> Schedules { get; }
     }
 }

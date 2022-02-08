@@ -12,7 +12,7 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.PrinterAc
         private readonly IPrintingSystem _printingSystem;
         private readonly PrinterSpecification _specification;
 
-        private ICycledJob _cycledJob = null;
+        private ICycledJob? _cycledJob = null;
         
         public CycledPrinterActor(
             PrinterSpecification specification,
@@ -32,18 +32,18 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.PrinterAc
             {
                 if (_cycledJob != null)
                 {
-                    _printingSystem.RegisterFinishedJob(_cycledJob);
+                    _printingSystem.RegisterFinishedJob(this, _cycledJob, cycledSimulationContext);
                 }
                 
-                _cycledJob = GetNewScheduledJob();
+                _cycledJob = GetNewScheduledJob(cycledSimulationContext);
             }
             
-            _cycledJob.Execute(_specification, cycledSimulationContext);
+            _cycledJob?.Execute(_specification, cycledSimulationContext);
         }
 
-        private ICycledJob GetNewScheduledJob()
+        private ICycledJob? GetNewScheduledJob(ICycledSimulationContext cycledSimulationContext)
         {
-            var newIncomingJob = _printingSystem.ScheduleNextJob(this);
+            var newIncomingJob = _printingSystem.ScheduleNextJob(this, cycledSimulationContext);
             if (newIncomingJob == null)
             {
                 return null;

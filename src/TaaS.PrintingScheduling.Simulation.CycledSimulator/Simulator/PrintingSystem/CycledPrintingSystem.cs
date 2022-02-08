@@ -14,12 +14,12 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.PrintingS
     public class CycledPrintingSystem : ICycledManagementActor, IPrintingSystem
     {
         private readonly ICycledPrintingJobsSource _jobsSource;
-        private readonly IReadOnlyCollection<CycledPrinterExecutionContext> _executionContexts;
+        private readonly IReadOnlyCollection<PrinterWorkloadContext> _executionContexts;
         private readonly IJobsScheduler<long> _jobsScheduler;
 
         public CycledPrintingSystem(
             ICycledPrintingJobsSource jobsSource,
-            IReadOnlyCollection<CycledPrinterExecutionContext> executionContexts,
+            IReadOnlyCollection<PrinterWorkloadContext> executionContexts,
             IJobsScheduler<long> jobsScheduler)
         {
             _jobsSource = jobsSource;
@@ -27,24 +27,30 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.PrintingS
             _jobsScheduler = jobsScheduler;
         }
 
-        public bool IsComplete => 
-            _jobsSource.IsContainsJobs && _executionContexts.All(context => context.IsFinish);
+        public bool IsComplete => !_jobsSource.IsContainsJobs && _executionContexts.All(context => context.IsEmpty);
         
         public void ExecuteManagingCycle(ICycledSimulationContext cycledContext)
         {
-            var incomingJobs = _jobsSource.GetIncomingJobs(cycledContext);
-            
-            var scheduledJobs = _jobsScheduler.Schedule(incomingJobs, _executionContexts);
+            if (_jobsSource.IsContainsJobs)
+            {
+                var incomingJobs = _jobsSource.GetIncomingJobs(cycledContext);
+                _jobsScheduler.Schedule(incomingJobs, _executionContexts, cycledContext.CurrentCycle);
+            }
         }
         
-        public void RegisterFinishedJob(ICycledJob finishedJob)
+        public void RegisterFinishedJob(IPrinter printer, ICycledJob finishedJob, ICycledSimulationContext cycledContext)
         {
-            throw new NotImplementedException();
+            Console.WriteLine($"FinishJob: '{finishedJob.Specification.Id}' at printer: '{printer.Id}'; start time: '{finishedJob.ExecutionStartTime}'; end time: '{finishedJob.ExecutionFinishTime}'");
+            _executionContexts
+                .First(context => context.Printer.Id == printer.Id)
+                .RegisterCompletedJob(finishedJob, cycledContext);
         }
 
-        public ICycledJob ScheduleNextJob(IPrinter printer)
+        public ICycledJob? ScheduleNextJob(IPrinter printer, ICycledSimulationContext cycledContext)
         {
-            throw new NotImplementedException();
+            return _executionContexts
+                .First(context => context.Printer.Id == printer.Id)
+                .StartNextScheduledJob(cycledContext);
         }
     }
 }

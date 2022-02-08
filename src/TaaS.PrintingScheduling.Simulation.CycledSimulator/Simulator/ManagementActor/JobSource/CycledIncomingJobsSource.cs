@@ -22,7 +22,7 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.Managemen
             {
                 batch.Add(_jobs.Dequeue());
             }
-
+            
             return batch;
         }
     }
