@@ -4,7 +4,7 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.LeastFinishTime
 {
     public class ScheduleOption<TTime> where TTime : struct
     {
-        public ScheduleOption(IPrinterSchedulingState<TTime> state, ExecutionTimeSlot<TTime> scheduledTimeSlot)
+        public ScheduleOption(IPrinterSchedulingState<TTime> state, TimeSlot<TTime> scheduledTimeSlot)
         {
             State = state;
             ScheduledTimeSlot = scheduledTimeSlot;
@@ -12,7 +12,7 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.LeastFinishTime
             
         public IPrinterSchedulingState<TTime> State { get; }
             
-        public ExecutionTimeSlot<TTime> ScheduledTimeSlot { get; }
+        public TimeSlot<TTime> ScheduledTimeSlot { get; }
 
     }
 }

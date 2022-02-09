@@ -1,22 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TaaS.PrintingScheduling.Simulation.Core.PrintingResult;
 using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator;
 using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.CycledEngine;
+using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.ManagementActor;
 using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.PrinterActor;
-using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.PrintingSystem;
 
 namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Builders
 {
     public class CycleSimulationEngineBuilder
     {
+        private readonly InMemoryResultsCollector<long> _resultsCollector = new();
         private IReadOnlyCollection<PrinterSpecification> _specifications;
         private CycledPrintingSystem _printingSystem;
 
         public CycleSimulationEngineBuilder WithPrintingSystem(Action<CycledPrintingSystemBuilder> configure)
         {
-            var builder = new CycledPrintingSystemBuilder(_specifications);
+            var builder = new CycledPrintingSystemBuilder(_specifications, _resultsCollector);
             configure(builder);
             
             _printingSystem = builder.Build();
@@ -51,7 +53,8 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Builders
 
             return new CycledSimulationEngine(
                 _printingSystem, 
-                _specifications.Select(printer => new CycledPrinterActor(printer, _printingSystem)).ToArray());
+                _specifications.Select(printer => new CycledPrinterActor(printer, _printingSystem)).ToArray(),
+                _resultsCollector);
         }
     }
 }

@@ -4,9 +4,9 @@ using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 
 namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Scheduler
 {
-    public class CycledTimeSlatCalculator : IJobTimeSlotCalculator<long>
+    public class CycledTimeSlotCalculator : IJobTimeSlotCalculator<long>
     {
-        public ExecutionTimeSlot<long> Calculate(
+        public TimeSlot<long> Calculate(
             PrinterSpecification printer, JobSpecification<long> job, long lastJobFinishTime)
         {
             var startTime = lastJobFinishTime + 1;
@@ -15,7 +15,7 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Scheduler
             var printingVolumePerCycle = printer.Resolution * printer.Resolution * printer.PrintingSpeed;
             var jobCyclesDuration = (long)Math.Ceiling(jobVolume / printingVolumePerCycle);
 
-            return new ExecutionTimeSlot<long>(startTime, startTime + jobCyclesDuration - 1);
+            return new TimeSlot<long>(startTime, startTime + jobCyclesDuration - 1);
         }
     }
 }

@@ -4,7 +4,7 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.Managemen
 {
     public interface ICycledManagementActor
     {
-        bool IsComplete { get; }
+        public bool IsComplete { get; }
         
         public void ExecuteManagingCycle(ICycledSimulationContext cycledContext);
     }

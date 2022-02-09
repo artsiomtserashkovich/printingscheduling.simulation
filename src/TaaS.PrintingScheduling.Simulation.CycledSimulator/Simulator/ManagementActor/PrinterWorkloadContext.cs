@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using TaaS.PrintingScheduling.Simulation.Core.Scheduler;
 using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.CycledEngine.Context;
-using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.ManagementActor.Jobs;
+using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.Jobs;
 
-namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.PrintingSystem
+namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.ManagementActor
 {
     public class PrinterWorkloadContext : IPrinterSchedulingState<long>
     {
@@ -27,7 +26,7 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.PrintingS
 
         public bool IsEmpty => CurrentJob == null && !_queue.Any();
 
-        public ICycledJob? StartNextScheduledJob(ICycledSimulationContext simulationContext)
+        public ICycledJob? StartNextScheduledJob()
         {
             if (CurrentJob != null)
             {
@@ -39,28 +38,14 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.PrintingS
                 var nextJob = _queue.Dequeue();
                 CurrentJob = nextJob;
                 
-                return new CycledJob(nextJob.Job);
+                return new CycledJob(CurrentJob);
             }
 
             return null;
         }
 
-        public void RegisterCompletedJob(ICycledJob completedJob, ICycledSimulationContext simulationContext)
+        public void CompletedCurrentJob()
         {
-            if (CurrentJob?.Job.Id != completedJob.Specification.Id)
-            {
-                throw new ArgumentException(
-                    "Not equal to current scheduled job.", 
-                    nameof(completedJob));
-            }
-            /*
-            if (CurrentJob.TimeSlot.Finish != simulationContext.CurrentCycle)
-            {
-                throw new InvalidOperationException("Estimated finish time and actual aren't equal. " + 
-                    $"Planned: '{CurrentJob.TimeSlot.Finish}', actual: '{simulationContext.CurrentCycle}'.");
-            }
-            */
-
             CurrentJob = null;
         }
     }

@@ -1,9 +1,8 @@
 ﻿using System;
-using TaaS.PrintingScheduling.Simulation.ConsoleTool.Simulator.PrintingSystem.Printer;
 using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.CycledEngine.Context;
+using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.Jobs;
 using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.ManagementActor;
-using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.ManagementActor.Jobs;
 
 namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.PrinterActor
 {
@@ -12,7 +11,7 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.PrinterAc
         private readonly IPrintingSystem _printingSystem;
         private readonly PrinterSpecification _specification;
 
-        private ICycledJob? _cycledJob = null;
+        private ICycledJob? _currentJob = null;
         
         public CycledPrinterActor(
             PrinterSpecification specification,
@@ -22,40 +21,45 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.PrinterAc
             _printingSystem = printingSystem;
         }
 
-        public bool IsFree => _cycledJob == null;
+        public bool IsFree => _currentJob == null;
 
         public int Id => _specification.Id; 
 
         public void ExecuteCycle(ICycledSimulationContext cycledSimulationContext)
         {
-            if (_cycledJob?.IsComplete ?? true)
+            if (_currentJob?.IsComplete ?? false)
             {
-                if (_cycledJob != null)
-                {
-                    _printingSystem.RegisterFinishedJob(this, _cycledJob, cycledSimulationContext);
-                }
-                
-                _cycledJob = GetNewScheduledJob(cycledSimulationContext);
+                var result = _currentJob.GetResultReport(_specification);
+                _printingSystem.RegisterFinishedJob(result);
             }
-            
-            _cycledJob?.Execute(_specification, cycledSimulationContext);
+            if (_currentJob == null || _currentJob.IsComplete)
+            {
+                InitializeNewJob();
+            }
+
+            ExecuteCycleImplementation(cycledSimulationContext);
         }
 
-        private ICycledJob? GetNewScheduledJob(ICycledSimulationContext cycledSimulationContext)
+        private void ExecuteCycleImplementation(ICycledSimulationContext cycledSimulationContext)
         {
-            var newIncomingJob = _printingSystem.ScheduleNextJob(this, cycledSimulationContext);
-            if (newIncomingJob == null)
-            {
-                return null;
-            }
+            _currentJob?.Execute(_specification, cycledSimulationContext);
+        }
+
+        private void InitializeNewJob()
+        {
+            var newIncomingJob = _printingSystem.ScheduleNextJob(this);
+            AssertIncomingJob(newIncomingJob);
             
-            if (newIncomingJob.Specification.Dimension > _specification.PrintingDimension)
+            _currentJob = newIncomingJob;
+        }
+
+        private void AssertIncomingJob(ICycledJob? job)
+        {
+            if (job != null && job.Specification.Dimension > _specification.PrintingDimension)
             {
                 throw new InvalidOperationException(
-                    $@"Dimension of the job with id='{newIncomingJob.Specification.Id}' is more then printer dimension.");
+                    $@"Dimension of the job with id='{job.Specification.Id}' is more then printer dimension.");
             }
-
-            return newIncomingJob;
         }
     }
 }

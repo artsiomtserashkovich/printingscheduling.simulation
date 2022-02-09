@@ -6,9 +6,9 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler
     {
         public JobSpecification<TTime> Job { get; }
 
-        public ExecutionTimeSlot<TTime> TimeSlot { get; }
+        public TimeSlot<TTime> TimeSlot { get; }
 
-        public JobSchedule(JobSpecification<TTime> job, ExecutionTimeSlot<TTime> timeSlot)
+        public JobSchedule(JobSpecification<TTime> job, TimeSlot<TTime> timeSlot)
         {
             Job = job;
             TimeSlot = timeSlot;

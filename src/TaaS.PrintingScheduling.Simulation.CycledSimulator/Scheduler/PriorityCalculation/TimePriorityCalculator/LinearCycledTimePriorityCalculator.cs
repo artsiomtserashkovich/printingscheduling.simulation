@@ -3,65 +3,57 @@ using TaaS.PrintingScheduling.Simulation.Core.Scheduler.PriorityCalculation.Time
 
 namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Scheduler.PriorityCalculation.TimePriorityCalculator
 {
-    public class LinearTimePriorityCalculator : ITimePriorityCalculator<int>
+    public class LinearTimePriorityCalculator : ITimePriorityCalculator<long>
     {
         private const int FloatPartPrecision = 3;
-        
-        private readonly int _minimumCycle;
-        private readonly int _maximumCycle;
 
-        public LinearTimePriorityCalculator(int minimumCycle, int maximumCycle)
+        public double Calculate(long scheduled, long minimum, long maximum)
         {
-            AssertCtorParameters(minimumCycle, maximumCycle);
-            
-            _minimumCycle = minimumCycle;
-            _maximumCycle = maximumCycle;
-        }
-        
-        public double Calculate(int cycle)
-        {
-            AssertCalculateParameters(cycle);
+            AssertCalculateParameters(scheduled, minimum, maximum);
 
-            var result = 1 - (double) (cycle - _minimumCycle) / (_maximumCycle - _minimumCycle);
+            if (scheduled == minimum && minimum == maximum)
+            {
+                return 1;
+            }
+
+            var result = 1 - (double) (scheduled - minimum) / (maximum - minimum);
             
             return Math.Round(result, FloatPartPrecision);
         }
         
-        private static void AssertCtorParameters(int minimumCycle, int maximumCycle)
-        {
-            if (minimumCycle <= 0)
-            {
-                throw new ArgumentException("Can't be 0 or negative.", nameof(minimumCycle));
-            }
-            
-            if (maximumCycle <= 0)
-            {
-                throw new ArgumentException("Can't be 0 or negative.", nameof(maximumCycle));
-            }
-            
-            if (minimumCycle >= maximumCycle)
-            {
-                throw new ArgumentException(
-                    $"{nameof(minimumCycle)} can't more or equal {nameof(maximumCycle)} with value: '{maximumCycle}'." +
-                    $" Current value: '{minimumCycle}'.",
-                    nameof(minimumCycle));
-            }
-        }
         
-        private void AssertCalculateParameters(int cycle)
+        private void AssertCalculateParameters(long scheduled, long minimum, long maximum)
         {
-            if (cycle < _minimumCycle)
+            if (minimum <= 0)
             {
-                throw new InvalidOperationException(
-                    $"Can't calculate priority for value that less than {nameof(_minimumCycle)} " +
-                    $"with value: '{_minimumCycle}'.");
+                throw new ArgumentException("Can't be 0 or negative.", nameof(minimum));
+            }
+            
+            if (maximum <= 0)
+            {
+                throw new ArgumentException("Can't be 0 or negative.", nameof(maximum));
             }
 
-            if (cycle > _maximumCycle)
+            if (minimum > maximum)
+            {
+                throw new ArgumentException(
+                    $"{nameof(minimum)} can't be equal {nameof(maximum)} with value: '{maximum}'." +
+                    $" Current value: '{minimum}'.",
+                    nameof(minimum));
+            }
+
+            if (scheduled < minimum)
             {
                 throw new InvalidOperationException(
-                    $"Can't calculate priority for value that more than {nameof(_maximumCycle)} "+
-                    $"with value: '{_maximumCycle}'.");
+                    $"Can't calculate priority for value that less than {nameof(minimum)} " +
+                    $"with value: '{minimum}'.");
+            }
+
+            if (scheduled > maximum)
+            {
+                throw new InvalidOperationException(
+                    $"Can't calculate priority for value that more than {nameof(maximum)} "+
+                    $"with value: '{maximum}'.");
             }
         }
     }

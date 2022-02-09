@@ -14,14 +14,25 @@ namespace TaaS.PrintingScheduling.Simulation.ConsoleTool
             var printers = reader.ReadPrinters("B:\\homeproject\\projects\\TaaS.PrintingScheduling.Simulation\\data\\case_1\\printers.csv");
             var jobs = reader.ReadJobs("B:\\homeproject\\projects\\TaaS.PrintingScheduling.Simulation\\data\\case_1\\jobs.csv");
             
-            new CycleSimulationEngineBuilder()
+            var results = new CycleSimulationEngineBuilder()
                 .WithPrinters(printers)
                 .WithPrintingSystem(builder => builder
-                    .WithLeastFinishTimeScheduler()
+                    .WithFixBoundTimeScheduler()
                     .WithIncomingJobs(jobs))
                 
                 .Build()
                     .Simulate();
+
+            foreach (var result in results)
+            {
+                Console.WriteLine(
+                    $"finishJob:'{result.JobId}'; " +
+                    $"printer:'{result.PrinterId}'; " +
+                    $"executionStartTime:'{result.ExecutionTime.Start}'; " +
+                    $"executionFinishTime:'{result.ExecutionTime.Finish}'; " +
+                    $"scheduledStartTime:'{result.ScheduledTime.Start}'; " +
+                    $"scheduledFinishTime:'{result.ScheduledTime.Finish}'.");
+            }
         }
     }
     

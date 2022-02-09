@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
-using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.PrintingSystem.PrintingResult;
+using TaaS.PrintingScheduling.Simulation.Core.PrintingResult;
+using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 
 namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator
 {
     public interface ISimulationEngine
     {
-        void Simulate();
+        IReadOnlyCollection<JobExecutionResult<long>> Simulate();
     }
 }

@@ -58,7 +58,7 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.LeastFinishTime
                 .ToArray();
         }
 
-        private ExecutionTimeSlot<TTime> GetNextTimeSlot(
+        private TimeSlot<TTime> GetNextTimeSlot(
             IPrinterSchedulingState<TTime> state,
             TTime currentTime,
             JobSpecification<TTime> job)

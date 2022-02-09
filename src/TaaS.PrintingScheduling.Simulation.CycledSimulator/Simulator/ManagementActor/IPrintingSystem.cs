@@ -1,13 +1,13 @@
-﻿using TaaS.PrintingScheduling.Simulation.ConsoleTool.Simulator.PrintingSystem.Printer;
-using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.CycledEngine.Context;
-using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.ManagementActor.Jobs;
+﻿using TaaS.PrintingScheduling.Simulation.Core.PrintingResult;
+using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.Jobs;
+using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.PrinterActor;
 
 namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.ManagementActor
 {
     public interface IPrintingSystem
     {
-        void RegisterFinishedJob(IPrinter printer, ICycledJob finishedJob, ICycledSimulationContext cycledContext);
+        void RegisterFinishedJob(JobExecutionResult<long> jobResult);
         
-        ICycledJob? ScheduleNextJob(IPrinter printer, ICycledSimulationContext cycledContext);
+        ICycledJob? ScheduleNextJob(IPrinter printer);
     }
 }

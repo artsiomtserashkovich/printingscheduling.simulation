@@ -3,6 +3,6 @@
     public interface ITimePriorityCalculator<in TTime> 
         where TTime : struct
     {
-        public double Calculate(TTime cycle);
+        public double Calculate(TTime scheduled, TTime minimum, TTime maximum);
     }
 }

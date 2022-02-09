@@ -94,10 +94,10 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.PriorityCalculation.
             }
             
 
-            if (minimumPrinterResolution >= maximumPrinterResolution)
+            if (minimumPrinterResolution > maximumPrinterResolution)
             {
                 throw new ArgumentException(
-                    $"{nameof(minimumPrinterResolution)} can't more or equal {nameof(maximumPrinterResolution)} with value: '{maximumPrinterResolution}'." +
+                    $"{nameof(minimumPrinterResolution)} can't be more {nameof(maximumPrinterResolution)} with value: '{maximumPrinterResolution}'." +
                     $" Current value: '{minimumPrinterResolution}'.",
                     nameof(minimumPrinterResolution));
             }
