@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TaaS.PrintingScheduling.Simulation.Core.Scheduler.Result;
+using TaaS.PrintingScheduling.Simulation.Core.Scheduler.ScheduleOptions;
 using TaaS.PrintingScheduling.Simulation.Core.Scheduler.SchedulingPolicies;
 using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 
@@ -19,10 +21,9 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.LeastFinishTime
             _schedulingPolicy = new NotFitDimensionsPolicy<TTime>(new WorseResolutionPolicy<TTime>());
         }
         
-        public void Schedule(
+        public SchedulingResult<TTime> Schedule(
             IEnumerable<JobSpecification<TTime>> incomingJobs, 
-            IEnumerable<IPrinterSchedulingState<TTime>> currentState, 
-            TTime currentTime)
+            IEnumerable<IPrinterSchedulingState<TTime>> currentState)
         {
             
             /*
@@ -32,7 +33,7 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.LeastFinishTime
             
             foreach (var incomingJob in incomingJobs)
             {
-                var options = GetScheduleOption(currentState, currentTime, incomingJob);
+                var options = GetScheduleOptions(currentState, incomingJob);
                 var option = ChoseBestOption(options);
                 if (option is null)
                 {
@@ -43,31 +44,28 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.LeastFinishTime
                 option.State.Schedules.Enqueue(new JobSchedule<TTime>(incomingJob, option.ScheduledTimeSlot));
             }
         }
-
-        private IReadOnlyCollection<ScheduleOption<TTime>> GetScheduleOption(
-            IEnumerable<IPrinterSchedulingState<TTime>> currentState,
-            TTime currentTime,
+        
+        private IReadOnlyCollection<ScheduleOption<TTime>> GetScheduleOptions(
+            IEnumerable<IPrinterSchedulingState<TTime>> states,
             JobSpecification<TTime> job)
         {
-            var allowedPrinters = currentState
-                .Where(state => _schedulingPolicy.IsAllowed(state.Printer, job));
-                
-            return allowedPrinters
-                .Select(state => new ScheduleOption<TTime>(
-                    state, GetNextTimeSlot(state,currentTime, job)))
+            return states
+                .Where(state => _schedulingPolicy.IsAllowed(state.Printer, job))
+                .Select(state => GetScheduleOption(state, job))
                 .ToArray();
         }
 
-        private TimeSlot<TTime> GetNextTimeSlot(
-            IPrinterSchedulingState<TTime> state,
-            TTime currentTime,
-            JobSpecification<TTime> job)
+        private ScheduleOption<TTime> GetScheduleOption(IPrinterSchedulingState<TTime> state, JobSpecification<TTime> job)
         {
-            var lastJobFinishTime = state.Schedules.Any() ? state.Schedules.Last().TimeSlot.Finish : currentTime;
+            var lastJobFinishTime = state.Schedules.Any() 
+                ? state.Schedules.Last().TimeSlot.Finish 
+                : state.NextSlotStartTime;
+            
+            var timeSlot = _timeSlotCalculator.Calculate(state.Printer, job, lastJobFinishTime);
 
-            return _timeSlotCalculator.Calculate(state.Printer, job, lastJobFinishTime);
+            return new ScheduleOption<TTime>(state, timeSlot);
         }
-        
+
         private static ScheduleOption<TTime> ChoseBestOption(IReadOnlyCollection<ScheduleOption<TTime>> options)
         {
             return options.OrderBy(option => option.ScheduledTimeSlot.Start).FirstOrDefault();

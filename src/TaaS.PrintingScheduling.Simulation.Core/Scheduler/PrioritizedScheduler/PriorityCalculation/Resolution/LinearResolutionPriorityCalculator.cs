@@ -1,44 +1,46 @@
 ﻿using System;
 
-namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.PriorityCalculation.ResolutionPriorityCalculator
+namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.PrioritizedScheduler.PriorityCalculation.Resolution
 {
     public class LinearResolutionPriorityCalculator : IResolutionPriorityCalculator
     {
         private const int FloatPartPrecision = 3;
         private const double ExpectedComparingPrecision = 0.01;
 
-        private readonly double _minimumPrinterResolution;
-        private readonly double _maximumPrinterResolution;
-        private readonly double _expectedResolution;
         private readonly double _thresholdValue;
 
         public LinearResolutionPriorityCalculator(
-            double minimumPrinterResolution, 
-            double maximumPrinterResolution,
-            double expectedResolution,
+            
             double thresholdValue)
         {
-            AssertCtorParameters(minimumPrinterResolution, maximumPrinterResolution, expectedResolution, thresholdValue);
+            if (thresholdValue <= 0 || thresholdValue >= 0.5)
+            {
+                throw new ArgumentException(
+                    "Can't be less or equal '0' or more than '0.5'." +
+                    $" Current value: '{thresholdValue}'.", 
+                    nameof(thresholdValue));
+            }
             
-            _minimumPrinterResolution = minimumPrinterResolution;
-            _maximumPrinterResolution = maximumPrinterResolution;
-            _expectedResolution = expectedResolution;
             _thresholdValue = thresholdValue;
         }
         
-        public double Calculate(double printerResolution)
+        public double Calculate(
+            double minimumPrinterResolution, 
+            double maximumPrinterResolution,
+            double expectedResolution,
+            double printerResolution)
         {
-            AssertCalculateParameters(printerResolution);
+            AssertCalculateParameters(minimumPrinterResolution, maximumPrinterResolution, expectedResolution, printerResolution);
 
-            if (printerResolution > _expectedResolution)
+            if (printerResolution > expectedResolution)
             {
                 var priority = 
-                    (_maximumPrinterResolution - printerResolution) / (_maximumPrinterResolution - _expectedResolution) 
+                    (maximumPrinterResolution - printerResolution) / (maximumPrinterResolution - expectedResolution) 
                     * _thresholdValue;
                 
                 return Math.Round(priority, FloatPartPrecision);
             }
-            else if (Math.Abs(printerResolution - _expectedResolution) < ExpectedComparingPrecision)
+            else if (Math.Abs(printerResolution - expectedResolution) < ExpectedComparingPrecision)
             {
                 var priority = 1 - _thresholdValue;
                 
@@ -47,19 +49,18 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.PriorityCalculation.
             else
             {
                 var priority = 
-                    ((_expectedResolution - printerResolution) / (_expectedResolution - _minimumPrinterResolution))
+                    ((expectedResolution - printerResolution) / (expectedResolution - minimumPrinterResolution))
                     * _thresholdValue + (1 - _thresholdValue);
                 
                 return Math.Round(priority, FloatPartPrecision);
             }
         }
-
-
-        private static void AssertCtorParameters(
+        
+        private  void AssertCalculateParameters(
             double minimumPrinterResolution,
             double maximumPrinterResolution,
             double expectedResolution,
-            double thresholdValue)
+            double printerResolution)
         {
             if (minimumPrinterResolution <= 0)
             {
@@ -85,15 +86,6 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.PriorityCalculation.
                     nameof(expectedResolution));
             }
             
-            if (thresholdValue <= 0 || thresholdValue >= 0.5)
-            {
-                throw new ArgumentException(
-                    "Can't be less or equal '0' or more than '0.5'." +
-                    $" Current value: '{thresholdValue}'.", 
-                    nameof(thresholdValue));
-            }
-            
-
             if (minimumPrinterResolution > maximumPrinterResolution)
             {
                 throw new ArgumentException(
@@ -110,22 +102,20 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.PriorityCalculation.
                     $" Current value: '{minimumPrinterResolution}'.",
                     nameof(expectedResolution));
             }
-        }
-        
-        private  void AssertCalculateParameters(double printerResolution)
-        {
-            if (printerResolution < _minimumPrinterResolution)
+            
+            
+            if (printerResolution < minimumPrinterResolution)
             {
                 throw new InvalidOperationException(
-                    $"Can't calculate priority for value that less than {nameof(_minimumPrinterResolution)} " +
-                    $"with value: '{_minimumPrinterResolution}'.");
+                    $"Can't calculate priority for value that less than {nameof(minimumPrinterResolution)} " +
+                    $"with value: '{minimumPrinterResolution}'.");
             }
 
-            if (printerResolution > _maximumPrinterResolution)
+            if (printerResolution > maximumPrinterResolution)
             {
                 throw new InvalidOperationException(
-                    $"Can't calculate priority for value that more than {nameof(_maximumPrinterResolution)} "+
-                    $"with value: '{_maximumPrinterResolution}'.");
+                    $"Can't calculate priority for value that more than {nameof(maximumPrinterResolution)} "+
+                    $"with value: '{maximumPrinterResolution}'.");
             }
         }
     }

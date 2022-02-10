@@ -1,34 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TaaS.PrintingScheduling.Simulation.Core.Scheduler.PriorityCalculation.ResolutionPriorityCalculator;
-using TaaS.PrintingScheduling.Simulation.Core.Scheduler.PriorityCalculation.TimePriorityCalculator;
+using TaaS.PrintingScheduling.Simulation.Core.Scheduler.PrioritizedScheduler.PriorityCalculation.Resolution;
+using TaaS.PrintingScheduling.Simulation.Core.Scheduler.PrioritizedScheduler.PriorityCalculation.Time;
+using TaaS.PrintingScheduling.Simulation.Core.Scheduler.Result;
+using TaaS.PrintingScheduling.Simulation.Core.Scheduler.ScheduleOptions;
 using TaaS.PrintingScheduling.Simulation.Core.Scheduler.SchedulingPolicies;
 using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 
-namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.FixBoundTime
+namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.PrioritizedScheduler.FixBoundTime
 {
     public class FixBoundTimeScheduler<TTime> : IJobsScheduler<TTime> where TTime : struct
     {
         private readonly IJobTimeSlotCalculator<TTime> _timeSlotCalculator;
         private readonly ITimePriorityCalculator<TTime> _timePriorityCalculator;
+        private readonly IResolutionPriorityCalculator _resolutionPriorityCalculator;
 
         private readonly ISchedulingPolicy<TTime> _schedulingPolicy;
         
         public FixBoundTimeScheduler(
             IJobTimeSlotCalculator<TTime> timeSlotCalculator, 
-            ITimePriorityCalculator<TTime> timePriorityCalculator)
+            ITimePriorityCalculator<TTime> timePriorityCalculator,
+            IResolutionPriorityCalculator resolutionPriorityCalculator)
         {
             _timeSlotCalculator = timeSlotCalculator;
             _timePriorityCalculator = timePriorityCalculator;
+            _resolutionPriorityCalculator = resolutionPriorityCalculator;
 
             _schedulingPolicy = new NotFitDimensionsPolicy<TTime>();
         }
         
-        public void Schedule(
+        public SchedulingResult<TTime> Schedule(
             IEnumerable<JobSpecification<TTime>> incomingJobs, 
-            IEnumerable<IPrinterSchedulingState<TTime>> currentState, 
-            TTime currentTime)
+            IEnumerable<IPrinterSchedulingState<TTime>> currentState)
         {
             
             /*
@@ -38,7 +42,7 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.FixBoundTime
             
             foreach (var incomingJob in incomingJobs)
             {
-                var options = GetScheduleOption(currentState, currentTime, incomingJob);
+                var options = GetPrioritizedScheduleOptions(currentState, incomingJob);
                 var option = ChoseBestOption(options);
                 if (option is null)
                 {
@@ -50,54 +54,59 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.FixBoundTime
             }
         }
 
-        private IReadOnlyCollection<PrioritizedScheduleOption<TTime>> GetScheduleOption(
-            IEnumerable<IPrinterSchedulingState<TTime>> currentState,
-            TTime currentTime,
+        private IReadOnlyCollection<PrioritizedScheduleOption<TTime>> GetPrioritizedScheduleOptions(
+            IEnumerable<IPrinterSchedulingState<TTime>> states,
             JobSpecification<TTime> job)
         {
-            var allowedPrintersStates = currentState
-                .Where(state => _schedulingPolicy.IsAllowed(state.Printer, job));
+            var schedules = GetScheduleOptions(states, job);
 
-            if (!allowedPrintersStates.Any())
-            {
-                return Array.Empty<PrioritizedScheduleOption<TTime>>();
-            }
-
-            var minResolution = allowedPrintersStates.Min(printer => printer.Printer.Resolution);
-            var maxResolution = allowedPrintersStates.Max(printer => printer.Printer.Resolution);
-            // TODO: move params to method (not init everyTime)
-            var resolutionPriorityCalculator = new LinearResolutionPriorityCalculator(
-                minResolution, maxResolution, job.Resolution, 0.2);
+            var minResolution = schedules.Min(printer => printer.State.Printer.Resolution);
+            var maxResolution = schedules.Max(printer => printer.State.Printer.Resolution);
             
-            var schedules =  allowedPrintersStates
-                .Select(state => new PrioritizedScheduleOption<TTime>(
-                    state, 
-                    GetNextTimeSlot(state,currentTime, job), 
-                    resolutionPriorityCalculator.Calculate(state.Printer.Resolution)))
-                .ToArray();
-
             var minFinishTime = schedules.Min(schedule => schedule.ScheduledTimeSlot.Finish);
             var maxFinishTime = schedules.Max(schedule => schedule.ScheduledTimeSlot.Finish);
-            foreach (var schedule in schedules)
-            {
-                schedule.TimePriority = _timePriorityCalculator
-                    .Calculate(
-                        schedule.ScheduledTimeSlot.Finish,
-                        minFinishTime,
-                        maxFinishTime);
-            }
 
-            return schedules;
+            return schedules
+                .Select(schedule => GetPrioritizedScheduleOption(
+                    schedule, job, minFinishTime, maxFinishTime, minResolution, maxResolution))
+                .ToArray();
         }
-
-        private TimeSlot<TTime> GetNextTimeSlot(
-            IPrinterSchedulingState<TTime> state,
-            TTime currentTime,
+        
+        private IReadOnlyCollection<ScheduleOption<TTime>> GetScheduleOptions(
+            IEnumerable<IPrinterSchedulingState<TTime>> states,
             JobSpecification<TTime> job)
         {
-            var lastJobFinishTime = state.Schedules.Any() ? state.Schedules.Last().TimeSlot.Finish : currentTime;
+            return states
+                .Where(state => _schedulingPolicy.IsAllowed(state.Printer, job))
+                .Select(state => GetScheduleOption(state, job))
+                .ToArray();
+        }
 
-            return _timeSlotCalculator.Calculate(state.Printer, job, lastJobFinishTime);
+        private ScheduleOption<TTime> GetScheduleOption(IPrinterSchedulingState<TTime> state, JobSpecification<TTime> job)
+        {
+            var lastJobFinishTime = state.Schedules.Any() 
+                ? state.Schedules.Last().TimeSlot.Finish 
+                : state.NextSlotStartTime;
+            
+            var timeSlot = _timeSlotCalculator.Calculate(state.Printer, job, lastJobFinishTime);
+
+            return new ScheduleOption<TTime>(state, timeSlot);
+        }
+        
+        private PrioritizedScheduleOption<TTime> GetPrioritizedScheduleOption(
+            ScheduleOption<TTime> schedule, JobSpecification<TTime> job, TTime minFinishTime, TTime maxFinishTime, double minResolution, double maxResolution)
+        {
+            var timePriority = _timePriorityCalculator
+                .Calculate(schedule.ScheduledTimeSlot.Finish, minFinishTime, maxFinishTime);
+
+            var resolutionPriority = _resolutionPriorityCalculator
+                .Calculate(
+                    minResolution,
+                    maxResolution,
+                    job.Resolution,
+                    schedule.State.Printer.Resolution);
+
+            return new PrioritizedScheduleOption<TTime>(schedule, timePriority, resolutionPriority);
         }
         
         private static PrioritizedScheduleOption<TTime> ChoseBestOption(IReadOnlyCollection<PrioritizedScheduleOption<TTime>> options)

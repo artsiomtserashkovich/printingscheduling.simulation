@@ -6,7 +6,7 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.Managemen
 {
     public interface IPrintingSystem
     {
-        void RegisterFinishedJob(JobExecutionResult<long> jobResult);
+        void RegisterFinishedJob(IPrinter printer, JobExecutionResult<long> jobResult);
         
         ICycledJob? ScheduleNextJob(IPrinter printer);
     }

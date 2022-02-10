@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.Immutable;
 using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 
 namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler
@@ -8,6 +7,8 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler
     {
         public PrinterSpecification Printer { get; }
         
-        public Queue<JobSchedule<TTime>> Schedules { get; }
+        public TTime NextSlotStartTime { get; }
+        
+        public IReadOnlyCollection<JobSchedule<TTime>> Schedules { get; }
     }
 }

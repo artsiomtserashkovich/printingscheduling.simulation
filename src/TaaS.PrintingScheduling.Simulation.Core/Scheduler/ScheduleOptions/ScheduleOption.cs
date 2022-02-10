@@ -1,6 +1,6 @@
 ﻿using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 
-namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.LeastFinishTime
+namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.ScheduleOptions
 {
     public class ScheduleOption<TTime> where TTime : struct
     {
