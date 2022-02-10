@@ -1,4 +1,6 @@
-﻿using TaaS.PrintingScheduling.Simulation.Core.Specifications;
+﻿using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
+using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 
 namespace TaaS.PrintingScheduling.Simulation.Core.PrintingResult
 {
@@ -18,14 +20,19 @@ namespace TaaS.PrintingScheduling.Simulation.Core.PrintingResult
             ExecutionTime = executionTime;
         }
         
+        [JsonPropertyName("jobId")]
         public int JobId { get; }
         
+        [JsonPropertyName("printerId")]
         public int PrinterId { get; }
         
+        [JsonPropertyName("incoming")]
         public TTime IncomingTime { get; }
 
+        [JsonPropertyName("scheduleTimeSlot")]
         public TimeSlot<TTime> ScheduledTime { get; }
         
+        [JsonPropertyName("executionTimeSlot")]
         public TimeSlot<TTime> ExecutionTime { get; }
     }
 }

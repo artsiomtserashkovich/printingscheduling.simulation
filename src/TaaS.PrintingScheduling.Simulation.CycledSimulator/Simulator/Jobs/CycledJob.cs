@@ -64,7 +64,8 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.Jobs
 
         private void ExecExecuteImplementation(PrinterSpecification printer, ICycledSimulationContext cycledContext)
         {
-            var cyclePrintingVolume = printer.Resolution * printer.Resolution * printer.PrintingSpeed;
+            var resolutionFactor = printer.Resolution * printer.Resolution * 10;
+            var cyclePrintingVolume =  resolutionFactor * printer.PrintingSpeed;
             var newRemainingVolume =_remainingVolume - cyclePrintingVolume;
             
             if (newRemainingVolume <= 0)

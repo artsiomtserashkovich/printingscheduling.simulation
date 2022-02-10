@@ -1,0 +1,198 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Walltime Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <table align = "center" id="table" border="1">
+    </table>
+    <canvas 
+            id="tasks-dashboard" 
+            width="1417" 
+            height="708" 
+            style="display: block; touch-action: none; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 472px; width: 945px;"></canvas>
+
+    <canvas
+            id="printers-dashboard"
+            width="1417"
+            height="708"
+            style="display: block; touch-action: none; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 472px; width: 945px;"></canvas>
+    <script>
+        const data = JSON.parse(
+           '[{"jobId":1,"printerId":10,"incoming":2884,"scheduleTimeSlot":{"start":2884,"finish":3151},"executionTimeSlot":{"start":2884,"finish":3150}},{"jobId":14,"printerId":12,"incoming":11115,"scheduleTimeSlot":{"start":11115,"finish":26419},"executionTimeSlot":{"start":11115,"finish":26418}},{"jobId":7,"printerId":3,"incoming":29955,"scheduleTimeSlot":{"start":29955,"finish":56957},"executionTimeSlot":{"start":29955,"finish":56956}},{"jobId":3,"printerId":1,"incoming":46924,"scheduleTimeSlot":{"start":46924,"finish":63070},"executionTimeSlot":{"start":46924,"finish":63069}},{"jobId":5,"printerId":1,"incoming":60908,"scheduleTimeSlot":{"start":60908,"finish":100448},"executionTimeSlot":{"start":63070,"finish":102609}},{"jobId":9,"printerId":3,"incoming":48920,"scheduleTimeSlot":{"start":48920,"finish":95443},"executionTimeSlot":{"start":56957,"finish":103479}},{"jobId":25,"printerId":10,"incoming":7282,"scheduleTimeSlot":{"start":7282,"finish":106484},"executionTimeSlot":{"start":7282,"finish":106483}},{"jobId":11,"printerId":4,"incoming":89081,"scheduleTimeSlot":{"start":89081,"finish":131945},"executionTimeSlot":{"start":89081,"finish":131944}},{"jobId":16,"printerId":6,"incoming":38450,"scheduleTimeSlot":{"start":38450,"finish":136301},"executionTimeSlot":{"start":38450,"finish":136300}},{"jobId":20,"printerId":8,"incoming":35465,"scheduleTimeSlot":{"start":35465,"finish":136403},"executionTimeSlot":{"start":35465,"finish":136402}},{"jobId":6,"printerId":1,"incoming":90605,"scheduleTimeSlot":{"start":90605,"finish":142251},"executionTimeSlot":{"start":102610,"finish":154255}},{"jobId":10,"printerId":3,"incoming":104060,"scheduleTimeSlot":{"start":104060,"finish":164261},"executionTimeSlot":{"start":104060,"finish":164260}},{"jobId":30,"printerId":11,"incoming":37128,"scheduleTimeSlot":{"start":37128,"finish":184717},"executionTimeSlot":{"start":37128,"finish":184716}},{"jobId":4,"printerId":1,"incoming":141360,"scheduleTimeSlot":{"start":141360,"finish":175899},"executionTimeSlot":{"start":154256,"finish":188794}},{"jobId":2,"printerId":1,"incoming":172144,"scheduleTimeSlot":{"start":172144,"finish":181333},"executionTimeSlot":{"start":188795,"finish":197983}},{"jobId":18,"printerId":7,"incoming":68086,"scheduleTimeSlot":{"start":68086,"finish":200950},"executionTimeSlot":{"start":68086,"finish":200949}},{"jobId":8,"printerId":3,"incoming":153346,"scheduleTimeSlot":{"start":153346,"finish":192947},"executionTimeSlot":{"start":164261,"finish":203861}},{"jobId":15,"printerId":6,"incoming":56545,"scheduleTimeSlot":{"start":56545,"finish":128196},"executionTimeSlot":{"start":136301,"finish":207951}},{"jobId":17,"printerId":5,"incoming":95887,"scheduleTimeSlot":{"start":95887,"finish":231337},"executionTimeSlot":{"start":95887,"finish":231336}},{"jobId":13,"printerId":4,"incoming":172088,"scheduleTimeSlot":{"start":172088,"finish":233711},"executionTimeSlot":{"start":172088,"finish":233710}},{"jobId":28,"printerId":10,"incoming":33142,"scheduleTimeSlot":{"start":33142,"finish":160932},"executionTimeSlot":{"start":106484,"finish":234273}},{"jobId":21,"printerId":8,"incoming":61165,"scheduleTimeSlot":{"start":61165,"finish":177872},"executionTimeSlot":{"start":136403,"finish":253109}},{"jobId":12,"printerId":6,"incoming":157805,"scheduleTimeSlot":{"start":157805,"finish":208862},"executionTimeSlot":{"start":207952,"finish":259008}},{"jobId":26,"printerId":9,"incoming":138149,"scheduleTimeSlot":{"start":138149,"finish":259500},"executionTimeSlot":{"start":138149,"finish":259499}},{"jobId":35,"printerId":12,"incoming":22200,"scheduleTimeSlot":{"start":22200,"finish":262319},"executionTimeSlot":{"start":26419,"finish":266537}},{"jobId":29,"printerId":11,"incoming":68837,"scheduleTimeSlot":{"start":68837,"finish":161955},"executionTimeSlot":{"start":184717,"finish":277834}},{"jobId":27,"printerId":10,"incoming":116412,"scheduleTimeSlot":{"start":116412,"finish":241541},"executionTimeSlot":{"start":234274,"finish":359402}},{"jobId":23,"printerId":8,"incoming":107895,"scheduleTimeSlot":{"start":177872,"finish":328043},"executionTimeSlot":{"start":253110,"finish":403280}},{"jobId":19,"printerId":5,"incoming":97475,"scheduleTimeSlot":{"start":97475,"finish":269876},"executionTimeSlot":{"start":231337,"finish":403737}},{"jobId":22,"printerId":7,"incoming":77040,"scheduleTimeSlot":{"start":77040,"finish":281621},"executionTimeSlot":{"start":200950,"finish":405530}},{"jobId":31,"printerId":11,"incoming":117571,"scheduleTimeSlot":{"start":161955,"finish":319445},"executionTimeSlot":{"start":277835,"finish":435324}},{"jobId":33,"printerId":12,"incoming":30968,"scheduleTimeSlot":{"start":30968,"finish":201708},"executionTimeSlot":{"start":266538,"finish":437277}},{"jobId":32,"printerId":12,"incoming":84687,"scheduleTimeSlot":{"start":201708,"finish":348956},"executionTimeSlot":{"start":437278,"finish":584525}},{"jobId":24,"printerId":7,"incoming":135851,"scheduleTimeSlot":{"start":281621,"finish":534479},"executionTimeSlot":{"start":405531,"finish":658388}},{"jobId":34,"printerId":12,"incoming":117965,"scheduleTimeSlot":{"start":348956,"finish":549804},"executionTimeSlot":{"start":584526,"finish":785373}}]'
+        )
+        
+        function generateTable(rawData)
+        {
+            function addHeaders(table) {
+                const row = table.insertRow();
+                row.insertCell().appendChild(document.createTextNode("job id"));
+                row.insertCell().appendChild(document.createTextNode("printer id"));
+                row.insertCell().appendChild(document.createTextNode("incoming"));
+                row.insertCell().appendChild(document.createTextNode("scheduled start"));
+                row.insertCell().appendChild(document.createTextNode("scheduled finish"));
+                row.insertCell().appendChild(document.createTextNode("execution start"));
+                row.insertCell().appendChild(document.createTextNode("execution finish"));
+            }
+
+            const table = document.getElementById('table');
+            addHeaders(table);
+            
+            const tableData = rawData.sort((a,b) => a.jobId - b.jobId);
+            
+            tableData.forEach(record => {
+                const row = table.insertRow();
+                
+                row.insertCell().appendChild(document.createTextNode(record.jobId));
+                row.insertCell().appendChild(document.createTextNode(record.printerId));
+                row.insertCell().appendChild(document.createTextNode(record.incoming));
+                row.insertCell().appendChild(document.createTextNode(record.scheduleTimeSlot.start));
+                row.insertCell().appendChild(document.createTextNode(record.scheduleTimeSlot.finish));
+                row.insertCell().appendChild(document.createTextNode(record.executionTimeSlot.start));
+                row.insertCell().appendChild(document.createTextNode(record.executionTimeSlot.finish));
+            })
+        }
+        
+        function getTasksChartData(rawData)
+        {
+            const configuration = {
+                total:
+                {
+                    color: '#d7d7d7',
+                    label: "Total time"
+                },
+                scheduled:
+                {
+                    color: '#ffcf92',
+                    label: "Scheduled slot"
+                },
+                executed:
+                {
+                    color: 'rgb(156,78,78)',
+                    label: "Executed slot"
+                }
+            };
+            
+            let chartData = {
+                labels: [],
+                datasets: [
+                    {
+                        data: [],
+                        backgroundColor: [ configuration.total.color ],
+                        host: [],
+                        label: configuration.total.label,
+                        order: 2
+                    },
+                    {
+                        data: [],
+                        backgroundColor: [ configuration.scheduled.color ],
+                        host: [],
+                        label: configuration.scheduled.label,
+                        order: 1
+                    },
+                    {
+                        data: [],
+                        backgroundColor: [ configuration.executed.color ],
+                        host: [],
+                        label: configuration.executed.label,
+                        order: 0
+                    }
+                ]
+            };
+            
+            var tasksData = data.sort((a,b) => a.jobId - b.jobId);
+            tasksData.forEach(record => {
+                chartData.labels.push(`Job ${record.jobId}`);
+                
+                chartData.datasets[0].host.push(record.jobId);
+                chartData.datasets[0].data.push([record.incoming, Math.max(record.executionTimeSlot.finish, record.scheduleTimeSlot.finish)]);
+                
+                chartData.datasets[1].host.push(record.jobId);
+                chartData.datasets[1].data.push([record.scheduleTimeSlot.start, record.scheduleTimeSlot.finish]);
+                
+                chartData.datasets[2].host.push(record.jobId);
+                chartData.datasets[2].data.push([record.executionTimeSlot.start, record.executionTimeSlot.finish]);
+            })
+            
+            return chartData;
+        }
+
+        function getPrintersChartData(rawData)
+        {
+            const printerIds = [...new Set(rawData.map(r => r.printerId).sort((a, b) => a - b))]
+            let chartData = {
+                labels: printerIds.map(i => `Printer ${i}`),
+                datasets: []
+            };
+
+            function getRandomColor() {
+                var letters = '0123456789ABCDEF';
+                var color = '#';
+                for (var i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
+            }
+            
+            for(const job of rawData)
+            {
+                chartData.datasets[job.jobId - 1] = {
+                    data: [],
+                    backgroundColor: [ getRandomColor() ],
+                    label: `Task ${job.jobId}`,
+                };
+
+                chartData.datasets[job.jobId - 1].data[job.printerId - 1] = [job.executionTimeSlot.start, job.executionTimeSlot.finish];
+            }
+
+            console.log(chartData)
+
+            return chartData;
+        }
+
+        generateTable(data);
+        
+        new Chart(document.getElementById('tasks-dashboard'), {
+            type: 'bar',
+            data: getTasksChartData(data),
+            
+            options: {
+                indexAxis: "y",
+                scales: {
+                    y: {
+                        stacked: true
+                    }
+                },
+                chartArea: {
+                    backgroundColor: "#FEF8F8"
+                },
+                legend: {
+                    display: false
+                }
+            }
+        });
+
+         new Chart(document.getElementById('printers-dashboard'), {
+            type: 'bar',
+            data: getPrintersChartData(data),
+
+            options: {
+                indexAxis: "y",
+                scales: {
+                    y: {
+                        stacked: true
+                    }
+                },
+                chartArea: {
+                    backgroundColor: "#FEF8F8"
+                },
+                legend: {
+                    display: false
+                }
+            }
+        });
+    </script>
+</body>
+</html>
