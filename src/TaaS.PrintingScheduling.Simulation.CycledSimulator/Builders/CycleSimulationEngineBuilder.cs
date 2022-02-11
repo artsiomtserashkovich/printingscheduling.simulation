@@ -18,6 +18,15 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Builders
 
         public CycleSimulationEngineBuilder WithPrintingSystem(Action<CycledPrintingSystemBuilder> configure)
         {
+            if (_specifications == null)
+            {
+                throw new InvalidOperationException($"{nameof(_specifications)} is not initialized.");
+            }
+            if(!_specifications.Any())
+            {
+                throw new InvalidOperationException($"{nameof(_specifications)} is empty.");
+            }
+            
             var builder = new CycledPrintingSystemBuilder(_specifications, _resultsCollector);
             configure(builder);
             
@@ -29,7 +38,7 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Builders
         {
             if (specifications == null)
             {
-                throw new InvalidOperationException($"{nameof(_printingSystem)} is not initialized.");
+                throw new InvalidOperationException($"{nameof(specifications)} is not initialized.");
             }
             if(!specifications.Any())
             {
@@ -51,9 +60,13 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Builders
                 throw new InvalidOperationException($"{nameof(_specifications)} is not initialized.");
             }
 
+            var printerActors = _specifications
+                .Select(printer => new CycledPrinterActor(printer, _printingSystem))
+                .ToArray();
+
             return new CycledSimulationEngine(
                 _printingSystem, 
-                _specifications.Select(printer => new CycledPrinterActor(printer, _printingSystem)).ToArray(),
+                printerActors,
                 _resultsCollector);
         }
     }

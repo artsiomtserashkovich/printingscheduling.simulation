@@ -1,31 +1,33 @@
-﻿using TaaS.PrintingScheduling.Simulation.Core.Specifications;
+﻿using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
+using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 
 namespace TaaS.PrintingScheduling.Simulation.Core.PrintingResult
 {
     public class JobExecutionResult<TTime> where TTime : struct
     {
         public JobExecutionResult(
-            int jobId, 
-            int printerId, 
-            TTime incomingTime, 
+            JobSpecification<TTime> job, 
+            PrinterSpecification printer,
             TimeSlot<TTime> scheduledTime, 
             TimeSlot<TTime> executionTime)
         {
-            JobId = jobId;
-            PrinterId = printerId;
-            IncomingTime = incomingTime;
+            Job = job;
+            Printer = printer;
             ScheduledTime = scheduledTime;
             ExecutionTime = executionTime;
         }
         
-        public int JobId { get; }
+        [JsonPropertyName("job")]
+        public JobSpecification<TTime> Job { get; }
         
-        public int PrinterId { get; }
-        
-        public TTime IncomingTime { get; }
+        [JsonPropertyName("printer")]
+        public PrinterSpecification Printer { get; }
 
+        [JsonPropertyName("scheduleTimeSlot")]
         public TimeSlot<TTime> ScheduledTime { get; }
         
+        [JsonPropertyName("executionTimeSlot")]
         public TimeSlot<TTime> ExecutionTime { get; }
     }
 }

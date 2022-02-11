@@ -10,7 +10,7 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.Jobs
         
         public bool IsComplete { get; }
 
-        public JobExecutionResult<long> GetResultReport(PrinterSpecification printer);
+        public JobExecutionResult<long> GetResultReport();
 
         public void Execute(PrinterSpecification printer, ICycledSimulationContext simulationContext);
     }

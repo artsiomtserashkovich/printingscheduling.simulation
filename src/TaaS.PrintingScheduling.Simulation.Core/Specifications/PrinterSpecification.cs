@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace TaaS.PrintingScheduling.Simulation.Core.Specifications
 {
@@ -17,12 +18,15 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Specifications
             Resolution = resolution;
         }
         
+        [JsonPropertyName("id")]
         public int Id { get; }
         
+        [JsonPropertyName("speed")]
         public double PrintingSpeed { get; }
         
         public Dimension PrintingDimension { get; }
         
+        [JsonPropertyName("resolution")]
         public double Resolution { get; }
     }
 }

@@ -2,14 +2,16 @@
 using TaaS.PrintingScheduling.Simulation.Core.Scheduler.Schedules;
 using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 
-namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler
+namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.SchedulingProfile
 {
-    public interface IPrinterSchedulingState<TTime> where TTime : struct
+    public interface IPrinterSchedulingContext<TTime> where TTime : struct
     {
+        public TTime NextAvailableTime { get; }
+
         public PrinterSpecification Printer { get; }
-        
-        public TTime NextSlotStartTime { get; }
-        
+
         public IReadOnlyCollection<JobSchedule<TTime>> Schedules { get; }
+        
+        public void ApplySchedule(JobSchedule<TTime> schedule);
     }
 }

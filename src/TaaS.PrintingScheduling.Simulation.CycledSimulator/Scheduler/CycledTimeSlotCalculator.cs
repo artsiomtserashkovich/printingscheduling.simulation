@@ -7,15 +7,16 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Scheduler
     public class CycledTimeSlotCalculator : IJobTimeSlotCalculator<long>
     {
         public TimeSlot<long> Calculate(
-            PrinterSpecification printer, JobSpecification<long> job, long lastJobFinishTime)
+            PrinterSpecification printer, JobSpecification<long> job, long startTime)
         {
-            var startTime = lastJobFinishTime + 1;
-            
             var jobVolume = job.Dimension.Volume;
-            var printingVolumePerCycle = printer.Resolution * printer.Resolution * printer.PrintingSpeed;
+            var resolutionFactor = printer.Resolution * printer.Resolution * 10;
+            
+            var printingVolumePerCycle = resolutionFactor * printer.PrintingSpeed;
+            
             var jobCyclesDuration = (long)Math.Ceiling(jobVolume / printingVolumePerCycle);
 
-            return new TimeSlot<long>(startTime, startTime + jobCyclesDuration - 1);
+            return new TimeSlot<long>(startTime, startTime + jobCyclesDuration);
         }
     }
 }

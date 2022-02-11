@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaaS.PrintingScheduling.Sim
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaaS.PrintingScheduling.Simulation.CycledSimulator.Tests", "tests\TaaS.PrintingScheduling.Simulation.CycledSimulator.Tests\TaaS.PrintingScheduling.Simulation.CycledSimulator.Tests.csproj", "{E74EB197-6EC1-4BE5-9044-C6C4A1164800}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaaS.PrintingScheduling.Simulation.WalltimeDashboard", "src\TaaS.PrintingScheduling.Simulation.WalltimeDashboard\TaaS.PrintingScheduling.Simulation.WalltimeDashboard.csproj", "{36A3337F-52C3-43EB-916A-CFBE1D14A68B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +48,10 @@ Global
 		{E74EB197-6EC1-4BE5-9044-C6C4A1164800}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E74EB197-6EC1-4BE5-9044-C6C4A1164800}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E74EB197-6EC1-4BE5-9044-C6C4A1164800}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36A3337F-52C3-43EB-916A-CFBE1D14A68B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36A3337F-52C3-43EB-916A-CFBE1D14A68B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36A3337F-52C3-43EB-916A-CFBE1D14A68B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36A3337F-52C3-43EB-916A-CFBE1D14A68B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{319919A8-29F9-43C3-A182-18553457D423} = {EFDFD220-8B42-46C3-A5EE-AE150424C37C}
@@ -54,5 +60,6 @@ Global
 		{66C05E24-4CA3-420D-A038-6FA749D1CA87} = {A6572292-FA40-484F-A7A1-16DD532F8667}
 		{FB1F19A9-623F-43A9-A682-2B8132486425} = {EFDFD220-8B42-46C3-A5EE-AE150424C37C}
 		{E74EB197-6EC1-4BE5-9044-C6C4A1164800} = {A6572292-FA40-484F-A7A1-16DD532F8667}
+		{36A3337F-52C3-43EB-916A-CFBE1D14A68B} = {EFDFD220-8B42-46C3-A5EE-AE150424C37C}
 	EndGlobalSection
 EndGlobal

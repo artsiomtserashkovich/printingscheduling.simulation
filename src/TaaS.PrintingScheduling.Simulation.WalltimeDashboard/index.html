@@ -1,0 +1,269 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Walltime Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <table align = "center" id="printers" border="1" style="border-collapse: collapse; text-align: center"></table>
+    <table align = "center" id="jobs" border="1" style="border-collapse: collapse; text-align: center"></table>
+    <table align = "center" id="results" border="1" style="border-collapse: collapse; text-align: center"></table>
+    <table align = "center" id="summary" border="1" style="border-collapse: collapse; text-align: center"></table>
+    <canvas 
+            id="tasks-dashboard" 
+            width="1417" 
+            height="708" 
+            style="display: block; touch-action: none; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 472px; width: 945px;"></canvas>
+
+    <canvas
+            id="printers-dashboard"
+            width="1417"
+            height="708"
+            style="display: block; touch-action: none; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 472px; width: 945px;"></canvas>
+    <script>
+        const data = JSON.parse('@RESULT_DATA')
+        function generatePrintersTable(rawData)
+        {
+            function addHeaders(table) {
+                const row = table.insertRow();
+                row.insertCell().appendChild(document.createTextNode("printer id"));
+                row.insertCell().appendChild(document.createTextNode("speed"));
+                row.insertCell().appendChild(document.createTextNode("resolution"));
+            }
+
+            const table = document.getElementById('printers');
+            addHeaders(table);
+            
+            let printers = []
+            rawData.forEach(record => {
+                printers[record.printer.id] = record.printer;
+            })
+            
+            const sortedPrinters = printers.sort((a, b) => a.id - b.id);
+
+            sortedPrinters.forEach(record => {
+                const row = table.insertRow();
+
+                row.insertCell().appendChild(document.createTextNode(record.id));
+                row.insertCell().appendChild(document.createTextNode(record.speed));
+                row.insertCell().appendChild(document.createTextNode(record.resolution));
+            })
+        }
+
+        function generateJobsTable(rawData)
+        {
+            function addHeaders(table) {
+                const row = table.insertRow();
+                row.insertCell().appendChild(document.createTextNode("job id"));
+                row.insertCell().appendChild(document.createTextNode("resolution"));
+                row.insertCell().appendChild(document.createTextNode("incoming"));
+                row.insertCell().appendChild(document.createTextNode("coefficient"));
+            }
+
+            const table = document.getElementById('jobs');
+            addHeaders(table);
+
+            rawData.forEach(record => {
+                const row = table.insertRow();
+
+                row.insertCell().appendChild(document.createTextNode(record.job.id));
+                row.insertCell().appendChild(document.createTextNode(record.job.resolution));
+                row.insertCell().appendChild(document.createTextNode(record.job.incoming));
+                row.insertCell().appendChild(document.createTextNode(record.job.coefficient));
+            })
+        }
+        
+        function generateSummaryTable(rawData)
+        {
+            function addHeaders(table) {
+                const row = table.insertRow();
+                row.insertCell().appendChild(document.createTextNode("Total time"));
+            }
+
+            const table = document.getElementById('summary');
+            addHeaders(table);
+            
+            let totalTime = 0;
+            rawData.forEach(record => {
+                totalTime = Math.max(totalTime, record.executionTimeSlot.finish)
+            })
+            const row = table.insertRow();
+            row.insertCell().appendChild(document.createTextNode(totalTime));
+        }
+
+        function generateResultsTable(rawData)
+        {
+            function addHeaders(table) {
+                const row = table.insertRow();
+                row.insertCell().appendChild(document.createTextNode("job id"));
+                row.insertCell().appendChild(document.createTextNode("printer id"));
+                row.insertCell().appendChild(document.createTextNode("incoming"));
+                row.insertCell().appendChild(document.createTextNode("execution start"));
+                row.insertCell().appendChild(document.createTextNode("execution finish"));
+                row.insertCell().appendChild(document.createTextNode("time in system"));
+                row.insertCell().appendChild(document.createTextNode("requested resolution"));
+                row.insertCell().appendChild(document.createTextNode("execution resolution"));
+            }
+
+            const table = document.getElementById('results');
+            addHeaders(table);
+
+            const tableData = rawData.sort((a,b) => a.job.id - b.job.id);
+
+            tableData.forEach(record => {
+                const row = table.insertRow();
+
+                row.insertCell().appendChild(document.createTextNode(record.job.id));
+                row.insertCell().appendChild(document.createTextNode(record.printer.id));
+                row.insertCell().appendChild(document.createTextNode(record.job.incoming));
+                row.insertCell().appendChild(document.createTextNode(record.executionTimeSlot.start));
+                row.insertCell().appendChild(document.createTextNode(record.executionTimeSlot.finish));
+                row.insertCell().appendChild(document.createTextNode(record.executionTimeSlot.finish - record.job.incoming));
+                row.insertCell().appendChild(document.createTextNode(record.job.resolution));
+                row.insertCell().appendChild(document.createTextNode(record.printer.resolution));
+            })
+        }
+        
+        function getTasksChartData(rawData)
+        {
+            const configuration = {
+                total:
+                {
+                    color: '#d7d7d7',
+                    label: "Total time in system"
+                },
+                scheduled:
+                {
+                    color: '#ffcf92',
+                    label: "Scheduled slot"
+                },
+                executed:
+                {
+                    color: 'rgb(141,141,141)',
+                    label: "Executed slot"
+                }
+            };
+            
+            let chartData = {
+                labels: [],
+                datasets: [
+                    {
+                        data: [],
+                        backgroundColor: [ configuration.total.color ],
+                        host: [],
+                        label: configuration.total.label,
+                        order: 2
+                    },
+                    {
+                        data: [],
+                        backgroundColor: [ configuration.scheduled.color ],
+                        host: [],
+                        label: configuration.scheduled.label,
+                        order: 1
+                    },
+                    {
+                        data: [],
+                        backgroundColor: [ configuration.executed.color ],
+                        host: [],
+                        label: configuration.executed.label,
+                        order: 0
+                    }
+                ]
+            };
+            
+            var tasksData = data.sort((a,b) => a.jobId - b.jobId);
+            tasksData.forEach(record => {
+                chartData.labels.push(`Job ${record.job.id}`);
+                
+                chartData.datasets[0].host.push(record.job.id);
+                chartData.datasets[0].data.push([record.job.incoming, Math.max(record.executionTimeSlot.finish, record.scheduleTimeSlot.finish)]);
+                
+                chartData.datasets[1].host.push(record.job.id);
+                chartData.datasets[1].data.push([record.scheduleTimeSlot.start, record.scheduleTimeSlot.finish]);
+                
+                chartData.datasets[2].host.push(record.job.id);
+                chartData.datasets[2].data.push([record.executionTimeSlot.start, record.executionTimeSlot.finish]);
+            })
+            
+            return chartData;
+        }
+
+        function getPrintersChartData(rawData)
+        {
+            const printerIds = [...new Set(rawData.map(r => r.printer.id).sort((a, b) => a - b))]
+            let chartData = {
+                labels: printerIds.map(i => `Printer ${i}`),
+                datasets: []
+            };
+
+            function getRandomColor() {
+                var letters = '0123456789ABCDEF';
+                var color = '#';
+                for (var i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
+            }
+            
+            for(const job of rawData)
+            {
+                chartData.datasets[job.job.id - 1] = {
+                    data: [],
+                    backgroundColor: [ getRandomColor() ],
+                    label: `Job ${job.job.id}`,
+                };
+
+                chartData.datasets[job.job.id - 1].data[job.printer.id - 1] = [job.executionTimeSlot.start, job.executionTimeSlot.finish];
+            }
+
+            return chartData;
+        }
+
+        generateJobsTable(data);
+        generatePrintersTable(data);
+        generateResultsTable(data);
+        generateSummaryTable(data);
+        
+        new Chart(document.getElementById('tasks-dashboard'), {
+            type: 'bar',
+            data: getTasksChartData(data),
+            
+            options: {
+                indexAxis: "y",
+                scales: {
+                    y: {
+                        stacked: true
+                    }
+                },
+                chartArea: {
+                    backgroundColor: "#FEF8F8"
+                },
+                legend: {
+                    display: false
+                }
+            }
+        });
+
+         new Chart(document.getElementById('printers-dashboard'), {
+            type: 'bar',
+            data: getPrintersChartData(data),
+
+            options: {
+                indexAxis: "y",
+                scales: {
+                    y: {
+                        stacked: true
+                    }
+                },
+                chartArea: {
+                    backgroundColor: "#FEF8F8"
+                },
+                legend: {
+                    display: false
+                }
+            }
+        });
+    </script>
+</body>
+</html>

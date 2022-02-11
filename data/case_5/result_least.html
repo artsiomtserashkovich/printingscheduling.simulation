@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Walltime Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <table align = "center" id="printers" border="1" style="border-collapse: collapse; text-align: center"></table>
+    <table align = "center" id="jobs" border="1" style="border-collapse: collapse; text-align: center"></table>
+    <table align = "center" id="results" border="1" style="border-collapse: collapse; text-align: center"></table>
+    <table align = "center" id="summary" border="1" style="border-collapse: collapse; text-align: center"></table>
+    <canvas 
+            id="tasks-dashboard" 
+            width="1417" 
+            height="708" 
+            style="display: block; touch-action: none; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 472px; width: 945px;"></canvas>
+
+    <canvas
+            id="printers-dashboard"
+            width="1417"
+            height="708"
+            style="display: block; touch-action: none; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 472px; width: 945px;"></canvas>
+    <script>
+        const data = JSON.parse('[{"job":{"id":8,"resolution":0.3,"incoming":5054,"coefficient":0.7},"printer":{"id":2,"speed":30,"PrintingDimension":{"X":150,"Y":150,"Z":150,"Volume":3375000},"resolution":0.3},"scheduleTimeSlot":{"start":5054,"finish":32056},"executionTimeSlot":{"start":5054,"finish":32055}},{"job":{"id":14,"resolution":0.4,"incoming":4079,"coefficient":0.6},"printer":{"id":4,"speed":35,"PrintingDimension":{"X":250,"Y":250,"Z":250,"Volume":15625000},"resolution":0.4},"scheduleTimeSlot":{"start":4079,"finish":40820},"executionTimeSlot":{"start":4079,"finish":40819}},{"job":{"id":4,"resolution":0.3,"incoming":9367,"coefficient":0.7},"printer":{"id":1,"speed":25,"PrintingDimension":{"X":100,"Y":100,"Z":125,"Volume":1250000},"resolution":0.2},"scheduleTimeSlot":{"start":9367,"finish":43906},"executionTimeSlot":{"start":9367,"finish":43905}},{"job":{"id":11,"resolution":0.4,"incoming":21561,"coefficient":0.6},"printer":{"id":5,"speed":35,"PrintingDimension":{"X":300,"Y":300,"Z":300,"Volume":27000000},"resolution":0.4},"scheduleTimeSlot":{"start":21561,"finish":50586},"executionTimeSlot":{"start":21561,"finish":50585}},{"job":{"id":7,"resolution":0.3,"incoming":7094,"coefficient":0.7},"printer":{"id":2,"speed":30,"PrintingDimension":{"X":150,"Y":150,"Z":150,"Volume":3375000},"resolution":0.3},"scheduleTimeSlot":{"start":32057,"finish":51070},"executionTimeSlot":{"start":32056,"finish":51068}},{"job":{"id":3,"resolution":0.2,"incoming":15810,"coefficient":0.8},"printer":{"id":1,"speed":25,"PrintingDimension":{"X":100,"Y":100,"Z":125,"Volume":1250000},"resolution":0.2},"scheduleTimeSlot":{"start":43907,"finish":60053},"executionTimeSlot":{"start":43906,"finish":60051}},{"job":{"id":2,"resolution":0.2,"incoming":17873,"coefficient":0.8},"printer":{"id":1,"speed":25,"PrintingDimension":{"X":100,"Y":100,"Z":125,"Volume":1250000},"resolution":0.2},"scheduleTimeSlot":{"start":60054,"finish":69243},"executionTimeSlot":{"start":60052,"finish":69240}},{"job":{"id":12,"resolution":0.4,"incoming":36669,"coefficient":0.6},"printer":{"id":3,"speed":30,"PrintingDimension":{"X":200,"Y":200,"Z":200,"Volume":8000000},"resolution":0.4},"scheduleTimeSlot":{"start":36669,"finish":79533},"executionTimeSlot":{"start":36669,"finish":79532}},{"job":{"id":9,"resolution":0.3,"incoming":20772,"coefficient":0.7},"printer":{"id":2,"speed":30,"PrintingDimension":{"X":150,"Y":150,"Z":150,"Volume":3375000},"resolution":0.3},"scheduleTimeSlot":{"start":51071,"finish":90672},"executionTimeSlot":{"start":51069,"finish":90669}},{"job":{"id":32,"resolution":0.7,"incoming":3514,"coefficient":0.3},"printer":{"id":8,"speed":40,"PrintingDimension":{"X":350,"Y":350,"Z":400,"Volume":49000000},"resolution":0.7},"scheduleTimeSlot":{"start":3514,"finish":96632},"executionTimeSlot":{"start":3514,"finish":96631}},{"job":{"id":5,"resolution":0.3,"incoming":28639,"coefficient":0.7},"printer":{"id":2,"speed":30,"PrintingDimension":{"X":150,"Y":150,"Z":150,"Volume":3375000},"resolution":0.3},"scheduleTimeSlot":{"start":90673,"finish":105318},"executionTimeSlot":{"start":90670,"finish":105314}},{"job":{"id":29,"resolution":0.6,"incoming":3472,"coefficient":0.4},"printer":{"id":7,"speed":45,"PrintingDimension":{"X":300,"Y":300,"Z":350,"Volume":31500000},"resolution":0.6},"scheduleTimeSlot":{"start":3472,"finish":111340},"executionTimeSlot":{"start":3472,"finish":111339}},{"job":{"id":6,"resolution":0.3,"incoming":35418,"coefficient":0.7},"printer":{"id":1,"speed":25,"PrintingDimension":{"X":100,"Y":100,"Z":125,"Volume":1250000},"resolution":0.2},"scheduleTimeSlot":{"start":69244,"finish":120890},"executionTimeSlot":{"start":69241,"finish":120886}},{"job":{"id":1,"resolution":0.2,"incoming":69440,"coefficient":0.8},"printer":{"id":1,"speed":25,"PrintingDimension":{"X":100,"Y":100,"Z":125,"Volume":1250000},"resolution":0.2},"scheduleTimeSlot":{"start":120891,"finish":125215},"executionTimeSlot":{"start":120887,"finish":125210}},{"job":{"id":15,"resolution":0.4,"incoming":37521,"coefficient":0.6},"printer":{"id":3,"speed":30,"PrintingDimension":{"X":200,"Y":200,"Z":200,"Volume":8000000},"resolution":0.4},"scheduleTimeSlot":{"start":79534,"finish":139100},"executionTimeSlot":{"start":79533,"finish":139098}},{"job":{"id":10,"resolution":0.3,"incoming":58756,"coefficient":0.7},"printer":{"id":2,"speed":30,"PrintingDimension":{"X":150,"Y":150,"Z":150,"Volume":3375000},"resolution":0.3},"scheduleTimeSlot":{"start":105319,"finish":151842},"executionTimeSlot":{"start":105315,"finish":151837}},{"job":{"id":21,"resolution":0.4,"incoming":33133,"coefficient":0.6},"printer":{"id":5,"speed":35,"PrintingDimension":{"X":300,"Y":300,"Z":300,"Volume":27000000},"resolution":0.4},"scheduleTimeSlot":{"start":50587,"finish":183451},"executionTimeSlot":{"start":50586,"finish":183449}},{"job":{"id":27,"resolution":0.5,"incoming":25546,"coefficient":0.5},"printer":{"id":6,"speed":35,"PrintingDimension":{"X":300,"Y":300,"Z":300,"Volume":27000000},"resolution":0.5},"scheduleTimeSlot":{"start":25546,"finish":187375},"executionTimeSlot":{"start":25546,"finish":187374}},{"job":{"id":22,"resolution":0.4,"incoming":22419,"coefficient":0.6},"printer":{"id":4,"speed":35,"PrintingDimension":{"X":250,"Y":250,"Z":250,"Volume":15625000},"resolution":0.4},"scheduleTimeSlot":{"start":40821,"finish":188593},"executionTimeSlot":{"start":40820,"finish":188591}},{"job":{"id":35,"resolution":0.8,"incoming":9316,"coefficient":0.2},"printer":{"id":9,"speed":40,"PrintingDimension":{"X":400,"Y":400,"Z":400,"Volume":64000000},"resolution":0.8},"scheduleTimeSlot":{"start":9316,"finish":210164},"executionTimeSlot":{"start":9316,"finish":210163}},{"job":{"id":28,"resolution":0.6,"incoming":31797,"coefficient":0.4},"printer":{"id":7,"speed":45,"PrintingDimension":{"X":300,"Y":300,"Z":350,"Volume":31500000},"resolution":0.6},"scheduleTimeSlot":{"start":111341,"finish":210543},"executionTimeSlot":{"start":111340,"finish":210541}},{"job":{"id":17,"resolution":0.4,"incoming":40100,"coefficient":0.6},"printer":{"id":3,"speed":30,"PrintingDimension":{"X":200,"Y":200,"Z":200,"Volume":8000000},"resolution":0.4},"scheduleTimeSlot":{"start":139101,"finish":220718},"executionTimeSlot":{"start":139099,"finish":220715}},{"job":{"id":33,"resolution":0.7,"incoming":27694,"coefficient":0.3},"printer":{"id":8,"speed":40,"PrintingDimension":{"X":350,"Y":350,"Z":400,"Volume":49000000},"resolution":0.7},"scheduleTimeSlot":{"start":96633,"finish":244222},"executionTimeSlot":{"start":96632,"finish":244220}},{"job":{"id":19,"resolution":0.4,"incoming":42028,"coefficient":0.6},"printer":{"id":4,"speed":35,"PrintingDimension":{"X":250,"Y":250,"Z":250,"Volume":15625000},"resolution":0.4},"scheduleTimeSlot":{"start":188594,"finish":286445},"executionTimeSlot":{"start":188592,"finish":286442}},{"job":{"id":23,"resolution":0.5,"incoming":36007,"coefficient":0.5},"printer":{"id":6,"speed":35,"PrintingDimension":{"X":300,"Y":300,"Z":300,"Volume":27000000},"resolution":0.5},"scheduleTimeSlot":{"start":187376,"finish":288314},"executionTimeSlot":{"start":187375,"finish":288312}},{"job":{"id":18,"resolution":0.4,"incoming":56003,"coefficient":0.6},"printer":{"id":3,"speed":30,"PrintingDimension":{"X":200,"Y":200,"Z":200,"Volume":8000000},"resolution":0.4},"scheduleTimeSlot":{"start":220719,"finish":304311},"executionTimeSlot":{"start":220716,"finish":304307}},{"job":{"id":30,"resolution":0.6,"incoming":41407,"coefficient":0.4},"printer":{"id":7,"speed":45,"PrintingDimension":{"X":300,"Y":300,"Z":350,"Volume":31500000},"resolution":0.6},"scheduleTimeSlot":{"start":210544,"finish":335673},"executionTimeSlot":{"start":210542,"finish":335670}},{"job":{"id":16,"resolution":0.4,"incoming":57730,"coefficient":0.6},"printer":{"id":4,"speed":35,"PrintingDimension":{"X":250,"Y":250,"Z":250,"Volume":15625000},"resolution":0.4},"scheduleTimeSlot":{"start":286446,"finish":339266},"executionTimeSlot":{"start":286443,"finish":339262}},{"job":{"id":13,"resolution":0.4,"incoming":68998,"coefficient":0.6},"printer":{"id":3,"speed":30,"PrintingDimension":{"X":200,"Y":200,"Z":200,"Volume":8000000},"resolution":0.4},"scheduleTimeSlot":{"start":304312,"finish":363878},"executionTimeSlot":{"start":304308,"finish":363873}},{"job":{"id":25,"resolution":0.5,"incoming":36311,"coefficient":0.5},"printer":{"id":5,"speed":35,"PrintingDimension":{"X":300,"Y":300,"Z":300,"Volume":27000000},"resolution":0.4},"scheduleTimeSlot":{"start":183452,"finish":388033},"executionTimeSlot":{"start":183450,"finish":388030}},{"job":{"id":34,"resolution":0.7,"incoming":28003,"coefficient":0.3},"printer":{"id":8,"speed":40,"PrintingDimension":{"X":350,"Y":350,"Z":400,"Volume":49000000},"resolution":0.7},"scheduleTimeSlot":{"start":244223,"finish":401713},"executionTimeSlot":{"start":244221,"finish":401710}},{"job":{"id":26,"resolution":0.5,"incoming":56695,"coefficient":0.5},"printer":{"id":6,"speed":35,"PrintingDimension":{"X":300,"Y":300,"Z":300,"Volume":27000000},"resolution":0.5},"scheduleTimeSlot":{"start":288315,"finish":438486},"executionTimeSlot":{"start":288313,"finish":438483}},{"job":{"id":36,"resolution":0.8,"incoming":55246,"coefficient":0.2},"printer":{"id":9,"speed":40,"PrintingDimension":{"X":400,"Y":400,"Z":400,"Volume":64000000},"resolution":0.8},"scheduleTimeSlot":{"start":210165,"finish":450284},"executionTimeSlot":{"start":210164,"finish":450282}},{"job":{"id":31,"resolution":0.6,"incoming":50390,"coefficient":0.4},"printer":{"id":7,"speed":45,"PrintingDimension":{"X":300,"Y":300,"Z":350,"Volume":31500000},"resolution":0.6},"scheduleTimeSlot":{"start":335674,"finish":463464},"executionTimeSlot":{"start":335671,"finish":463460}},{"job":{"id":20,"resolution":0.4,"incoming":63738,"coefficient":0.6},"printer":{"id":5,"speed":35,"PrintingDimension":{"X":300,"Y":300,"Z":300,"Volume":27000000},"resolution":0.4},"scheduleTimeSlot":{"start":388034,"finish":504134},"executionTimeSlot":{"start":388031,"finish":504130}},{"job":{"id":24,"resolution":0.5,"incoming":63135,"coefficient":0.5},"printer":{"id":4,"speed":35,"PrintingDimension":{"X":250,"Y":250,"Z":250,"Volume":15625000},"resolution":0.4},"scheduleTimeSlot":{"start":339267,"finish":521622},"executionTimeSlot":{"start":339263,"finish":521617}}]')
+        function generatePrintersTable(rawData)
+        {
+            function addHeaders(table) {
+                const row = table.insertRow();
+                row.insertCell().appendChild(document.createTextNode("printer id"));
+                row.insertCell().appendChild(document.createTextNode("speed"));
+                row.insertCell().appendChild(document.createTextNode("resolution"));
+            }
+
+            const table = document.getElementById('printers');
+            addHeaders(table);
+            
+            let printers = []
+            rawData.forEach(record => {
+                printers[record.printer.id] = record.printer;
+            })
+            
+            const sortedPrinters = printers.sort((a, b) => a.id - b.id);
+
+            sortedPrinters.forEach(record => {
+                const row = table.insertRow();
+
+                row.insertCell().appendChild(document.createTextNode(record.id));
+                row.insertCell().appendChild(document.createTextNode(record.speed));
+                row.insertCell().appendChild(document.createTextNode(record.resolution));
+            })
+        }
+
+        function generateJobsTable(rawData)
+        {
+            function addHeaders(table) {
+                const row = table.insertRow();
+                row.insertCell().appendChild(document.createTextNode("job id"));
+                row.insertCell().appendChild(document.createTextNode("resolution"));
+                row.insertCell().appendChild(document.createTextNode("incoming"));
+                row.insertCell().appendChild(document.createTextNode("coefficient"));
+            }
+
+            const table = document.getElementById('jobs');
+            addHeaders(table);
+
+            rawData.forEach(record => {
+                const row = table.insertRow();
+
+                row.insertCell().appendChild(document.createTextNode(record.job.id));
+                row.insertCell().appendChild(document.createTextNode(record.job.resolution));
+                row.insertCell().appendChild(document.createTextNode(record.job.incoming));
+                row.insertCell().appendChild(document.createTextNode(record.job.coefficient));
+            })
+        }
+        
+        function generateSummaryTable(rawData)
+        {
+            function addHeaders(table) {
+                const row = table.insertRow();
+                row.insertCell().appendChild(document.createTextNode("Total time"));
+            }
+
+            const table = document.getElementById('summary');
+            addHeaders(table);
+            
+            let totalTime = 0;
+            rawData.forEach(record => {
+                totalTime = Math.max(totalTime, record.executionTimeSlot.finish)
+            })
+            const row = table.insertRow();
+            row.insertCell().appendChild(document.createTextNode(totalTime));
+        }
+
+        function generateResultsTable(rawData)
+        {
+            function addHeaders(table) {
+                const row = table.insertRow();
+                row.insertCell().appendChild(document.createTextNode("job id"));
+                row.insertCell().appendChild(document.createTextNode("printer id"));
+                row.insertCell().appendChild(document.createTextNode("incoming"));
+                row.insertCell().appendChild(document.createTextNode("execution start"));
+                row.insertCell().appendChild(document.createTextNode("execution finish"));
+                row.insertCell().appendChild(document.createTextNode("time in system"));
+                row.insertCell().appendChild(document.createTextNode("requested resolution"));
+                row.insertCell().appendChild(document.createTextNode("execution resolution"));
+            }
+
+            const table = document.getElementById('results');
+            addHeaders(table);
+
+            const tableData = rawData.sort((a,b) => a.job.id - b.job.id);
+
+            tableData.forEach(record => {
+                const row = table.insertRow();
+
+                row.insertCell().appendChild(document.createTextNode(record.job.id));
+                row.insertCell().appendChild(document.createTextNode(record.printer.id));
+                row.insertCell().appendChild(document.createTextNode(record.job.incoming));
+                row.insertCell().appendChild(document.createTextNode(record.executionTimeSlot.start));
+                row.insertCell().appendChild(document.createTextNode(record.executionTimeSlot.finish));
+                row.insertCell().appendChild(document.createTextNode(record.executionTimeSlot.finish - record.job.incoming));
+                row.insertCell().appendChild(document.createTextNode(record.job.resolution));
+                row.insertCell().appendChild(document.createTextNode(record.printer.resolution));
+            })
+        }
+        
+        function getTasksChartData(rawData)
+        {
+            const configuration = {
+                total:
+                {
+                    color: '#d7d7d7',
+                    label: "Total time in system"
+                },
+                scheduled:
+                {
+                    color: '#ffcf92',
+                    label: "Scheduled slot"
+                },
+                executed:
+                {
+                    color: 'rgb(141,141,141)',
+                    label: "Executed slot"
+                }
+            };
+            
+            let chartData = {
+                labels: [],
+                datasets: [
+                    {
+                        data: [],
+                        backgroundColor: [ configuration.total.color ],
+                        host: [],
+                        label: configuration.total.label,
+                        order: 2
+                    },
+                    {
+                        data: [],
+                        backgroundColor: [ configuration.scheduled.color ],
+                        host: [],
+                        label: configuration.scheduled.label,
+                        order: 1
+                    },
+                    {
+                        data: [],
+                        backgroundColor: [ configuration.executed.color ],
+                        host: [],
+                        label: configuration.executed.label,
+                        order: 0
+                    }
+                ]
+            };
+            
+            var tasksData = data.sort((a,b) => a.jobId - b.jobId);
+            tasksData.forEach(record => {
+                chartData.labels.push(`Job ${record.job.id}`);
+                
+                chartData.datasets[0].host.push(record.job.id);
+                chartData.datasets[0].data.push([record.job.incoming, Math.max(record.executionTimeSlot.finish, record.scheduleTimeSlot.finish)]);
+                
+                chartData.datasets[1].host.push(record.job.id);
+                chartData.datasets[1].data.push([record.scheduleTimeSlot.start, record.scheduleTimeSlot.finish]);
+                
+                chartData.datasets[2].host.push(record.job.id);
+                chartData.datasets[2].data.push([record.executionTimeSlot.start, record.executionTimeSlot.finish]);
+            })
+            
+            return chartData;
+        }
+
+        function getPrintersChartData(rawData)
+        {
+            const printerIds = [...new Set(rawData.map(r => r.printer.id).sort((a, b) => a - b))]
+            let chartData = {
+                labels: printerIds.map(i => `Printer ${i}`),
+                datasets: []
+            };
+
+            function getRandomColor() {
+                var letters = '0123456789ABCDEF';
+                var color = '#';
+                for (var i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
+            }
+            
+            for(const job of rawData)
+            {
+                chartData.datasets[job.job.id - 1] = {
+                    data: [],
+                    backgroundColor: [ getRandomColor() ],
+                    label: `Job ${job.job.id}`,
+                };
+
+                chartData.datasets[job.job.id - 1].data[job.printer.id - 1] = [job.executionTimeSlot.start, job.executionTimeSlot.finish];
+            }
+
+            return chartData;
+        }
+
+        generateJobsTable(data);
+        generatePrintersTable(data);
+        generateResultsTable(data);
+        generateSummaryTable(data);
+        
+        new Chart(document.getElementById('tasks-dashboard'), {
+            type: 'bar',
+            data: getTasksChartData(data),
+            
+            options: {
+                indexAxis: "y",
+                scales: {
+                    y: {
+                        stacked: true
+                    }
+                },
+                chartArea: {
+                    backgroundColor: "#FEF8F8"
+                },
+                legend: {
+                    display: false
+                }
+            }
+        });
+
+         new Chart(document.getElementById('printers-dashboard'), {
+            type: 'bar',
+            data: getPrintersChartData(data),
+
+            options: {
+                indexAxis: "y",
+                scales: {
+                    y: {
+                        stacked: true
+                    }
+                },
+                chartArea: {
+                    backgroundColor: "#FEF8F8"
+                },
+                legend: {
+                    display: false
+                }
+            }
+        });
+    </script>
+</body>
+</html>
