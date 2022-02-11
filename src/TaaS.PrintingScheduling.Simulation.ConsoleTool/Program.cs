@@ -15,7 +15,7 @@ namespace TaaS.PrintingScheduling.Simulation.ConsoleTool
             var results = new CycleSimulationEngineBuilder()
                 .WithPrinters(printers)
                 .WithPrintingSystem(builder => builder
-                    .WithFixBoundTimeScheduler()
+                    .WithLeastFinishTimeScheduler()
                     .WithIncomingJobs(jobs))
                 
                 .Build()

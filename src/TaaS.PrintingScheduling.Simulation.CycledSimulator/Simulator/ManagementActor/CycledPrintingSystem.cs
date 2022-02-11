@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using TaaS.PrintingScheduling.Simulation.Core.PrintingResult;
 using TaaS.PrintingScheduling.Simulation.Core.Scheduler;
 using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.CycledEngine.Context;
@@ -37,11 +35,13 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.Managemen
             if (_jobsSource.IsContainsJobs)
             {
                 var incomingJobs = _jobsSource.GetIncomingJobs(cycledContext);
-                var currentPrintersStates = _workloadContext.GetCurrentStates(cycledContext);
-                
-                var schedulingResult = _jobsScheduler.Schedule(incomingJobs, currentPrintersStates);
+                if (incomingJobs.Any())
+                {
+                    var currentPrintersStates = _workloadContext.GetCurrentStates(cycledContext);
+                    var schedulingResult = _jobsScheduler.Schedule(incomingJobs, currentPrintersStates);
 
-                _workloadContext.ApplySchedulingResult(schedulingResult);
+                    _workloadContext.ApplySchedulingResult(schedulingResult.Scheduled);
+                }
             }
         }
         

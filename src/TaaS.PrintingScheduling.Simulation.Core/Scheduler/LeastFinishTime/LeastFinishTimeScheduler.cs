@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using TaaS.PrintingScheduling.Simulation.Core.Scheduler.Result;
-using TaaS.PrintingScheduling.Simulation.Core.Scheduler.ScheduleOptions;
+using TaaS.PrintingScheduling.Simulation.Core.Scheduler.Schedules;
 using TaaS.PrintingScheduling.Simulation.Core.Scheduler.SchedulingPolicies;
+using TaaS.PrintingScheduling.Simulation.Core.Scheduler.SchedulingProfile;
 using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 
 namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.LeastFinishTime
@@ -14,61 +13,65 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.LeastFinishTime
     {
         private readonly IJobTimeSlotCalculator<TTime> _timeSlotCalculator;
         private readonly ISchedulingPolicy<TTime> _schedulingPolicy;
+        
+        
+        private readonly IPrinterSchedulingContextFactory<TTime> _contextFactory;
 
-        public LeastFinishTimeScheduler(IJobTimeSlotCalculator<TTime> timeSlotCalculator)
+        public LeastFinishTimeScheduler(IJobTimeSlotCalculator<TTime> timeSlotCalculator, IPrinterSchedulingContextFactory<TTime> contextFactory)
         {
             _timeSlotCalculator = timeSlotCalculator;
+            _contextFactory = contextFactory;
             _schedulingPolicy = new NotFitDimensionsPolicy<TTime>(new WorseResolutionPolicy<TTime>());
         }
         
         public SchedulingResult<TTime> Schedule(
             IEnumerable<JobSpecification<TTime>> incomingJobs, 
-            IEnumerable<IPrinterSchedulingState<TTime>> currentState)
+            IEnumerable<IPrinterSchedulingState<TTime>> states)
         {
-            
-            /*
-             * 1) Compose Scheduling profile based on current printer state
-             * 2) [Iterative] Try to schedule jobs[i] to profile and track all new jobs
-             */
-            
+            var printersContext = _contextFactory.CreateFilledContexts(states);
             foreach (var incomingJob in incomingJobs)
             {
-                var options = GetScheduleOptions(currentState, incomingJob);
+                var options = GetScheduleOptions(printersContext, incomingJob);
                 var option = ChoseBestOption(options);
+                
                 if (option is null)
                 {
                     throw new InvalidOperationException(
                         $"No available option to schedule incoming job with id: '{incomingJob.Id}'.");
                 }
-                
-                option.State.Schedules.Enqueue(new JobSchedule<TTime>(incomingJob, option.ScheduledTimeSlot));
+                else
+                {
+                    var printerContext = printersContext.First(context => context.Printer.Id == option.Printer.Id);
+                    printerContext.ApplySchedule(option);
+                }
             }
+
+            return new SchedulingResult<TTime>(
+                printersContext.ToDictionary(
+                    context => context.Printer.Id,
+                    context => context.Schedules));
         }
         
-        private IReadOnlyCollection<ScheduleOption<TTime>> GetScheduleOptions(
-            IEnumerable<IPrinterSchedulingState<TTime>> states,
+        private IReadOnlyCollection<JobSchedule<TTime>> GetScheduleOptions(
+            IEnumerable<IPrinterSchedulingContext<TTime>> contexts,
             JobSpecification<TTime> job)
         {
-            return states
+            return contexts
                 .Where(state => _schedulingPolicy.IsAllowed(state.Printer, job))
                 .Select(state => GetScheduleOption(state, job))
                 .ToArray();
         }
 
-        private ScheduleOption<TTime> GetScheduleOption(IPrinterSchedulingState<TTime> state, JobSpecification<TTime> job)
+        private JobSchedule<TTime> GetScheduleOption(IPrinterSchedulingContext<TTime> context, JobSpecification<TTime> job)
         {
-            var lastJobFinishTime = state.Schedules.Any() 
-                ? state.Schedules.Last().TimeSlot.Finish 
-                : state.NextSlotStartTime;
-            
-            var timeSlot = _timeSlotCalculator.Calculate(state.Printer, job, lastJobFinishTime);
+            var timeSlot = _timeSlotCalculator.Calculate(context.Printer, job, context.NextAvailableTime);
 
-            return new ScheduleOption<TTime>(state, timeSlot);
+            return new JobSchedule<TTime>(context.Printer, job, timeSlot);
         }
 
-        private static ScheduleOption<TTime> ChoseBestOption(IReadOnlyCollection<ScheduleOption<TTime>> options)
+        private static JobSchedule<TTime> ChoseBestOption(IReadOnlyCollection<JobSchedule<TTime>> options)
         {
-            return options.OrderBy(option => option.ScheduledTimeSlot.Start).FirstOrDefault();
+            return options.OrderBy(option => option.TimeSlot.Finish).FirstOrDefault();
         }
     }
 }

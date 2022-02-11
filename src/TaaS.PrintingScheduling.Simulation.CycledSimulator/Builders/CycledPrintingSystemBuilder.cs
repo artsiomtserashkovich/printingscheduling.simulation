@@ -10,6 +10,7 @@ using TaaS.PrintingScheduling.Simulation.Core.Scheduler.PrioritizedScheduler.Pri
 using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 using TaaS.PrintingScheduling.Simulation.CycledSimulator.Scheduler;
 using TaaS.PrintingScheduling.Simulation.CycledSimulator.Scheduler.PriorityCalculation.TimePriorityCalculator;
+using TaaS.PrintingScheduling.Simulation.CycledSimulator.Scheduler.SchedulingProfile;
 using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.JobSource;
 using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.ManagementActor;
 using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.ManagementActor.WorkloadContext;
@@ -46,7 +47,7 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Builders
         
         public CycledPrintingSystemBuilder WithLeastFinishTimeScheduler()
         {
-            _jobsScheduler = new LeastFinishTimeScheduler<long>(new CycledTimeSlotCalculator());
+            _jobsScheduler = new LeastFinishTimeScheduler<long>(new CycledTimeSlotCalculator(), new CycledPrinterSchedulingContextFactory());
             
             return this;
         }
@@ -56,7 +57,8 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Builders
             _jobsScheduler = new FixBoundTimeScheduler<long>(
                 new CycledTimeSlotCalculator(), 
                 new LinearTimePriorityCalculator(),
-                new LinearResolutionPriorityCalculator(resolutionThreshold));
+                new LinearResolutionPriorityCalculator(resolutionThreshold),
+                new CycledPrinterSchedulingContextFactory());
             
             return this;
         }

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using TaaS.PrintingScheduling.Simulation.Core.Scheduler.Result;
+using TaaS.PrintingScheduling.Simulation.Core.Scheduler.SchedulingProfile;
 using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 
 namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler
@@ -8,6 +8,6 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler
     {
         public SchedulingResult<TTime> Schedule(
             IEnumerable<JobSpecification<TTime>> incomingJobs, 
-            IEnumerable<IPrinterSchedulingState<TTime>> currentState);
+            IEnumerable<IPrinterSchedulingState<TTime>> states);
     }
 }

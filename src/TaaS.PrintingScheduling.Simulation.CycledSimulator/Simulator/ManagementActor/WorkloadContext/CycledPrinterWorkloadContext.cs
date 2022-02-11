@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using TaaS.PrintingScheduling.Simulation.Core.Scheduler;
+using TaaS.PrintingScheduling.Simulation.Core.Scheduler.Schedules;
 using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.CycledEngine.Context;
-using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.Jobs;
 
 namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.ManagementActor.WorkloadContext
 {
     public class CycledPrinterWorkloadContext
     {
         private readonly PrinterSpecification _printer;
-        private readonly Queue<JobSchedule<long>> _queue;
+        private Queue<JobSchedule<long>> _queue;
         
         private JobSchedule<long>? _currentJob;
         
@@ -30,7 +30,9 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.Managemen
                 throw new InvalidOperationException("Previous job didn't completed.");
             }
             
-            return _queue.Any() ? _queue.Dequeue() : null;
+            _currentJob = _queue.Any() ? _queue.Dequeue() : null;
+
+            return _currentJob;
         }
 
         public void CompletedCurrentJob()
@@ -44,24 +46,10 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.Managemen
             
             return new PrinterWorkflowState(_queue.ToArray(), nextSlotStartTime, _printer);
         }
-
-        public class PrinterWorkflowState : IPrinterSchedulingState<long>
+        
+        public void ApplyRescheduling(IEnumerable<JobSchedule<long>> resultValue)
         {
-            public PrinterWorkflowState(
-                IReadOnlyCollection<JobSchedule<long>> schedules, 
-                long activityExpectedFinishTime, 
-                PrinterSpecification printer)
-            {
-                Schedules = schedules;
-                NextSlotStartTime = activityExpectedFinishTime;
-                Printer = printer;
-            }
-            
-            public PrinterSpecification Printer { get; }
-            
-            public long NextSlotStartTime { get; }
-            
-            public IReadOnlyCollection<JobSchedule<long>> Schedules { get; }
+            _queue = new Queue<JobSchedule<long>>(resultValue);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using TaaS.PrintingScheduling.Simulation.Core.PrintingResult;
 using TaaS.PrintingScheduling.Simulation.Core.Scheduler;
+using TaaS.PrintingScheduling.Simulation.Core.Scheduler.Schedules;
 using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.CycledEngine.Context;
 

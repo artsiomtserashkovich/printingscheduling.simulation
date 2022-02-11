@@ -7,10 +7,6 @@ namespace TaaS.PrintingScheduling.Simulation.Core.PrintingResult
     public class JobExecutionResult<TTime> where TTime : struct
     {
         public JobExecutionResult(
-            JobSpecification<TTime> job, 
-            PrinterSpecification printer,)
-        
-        public JobExecutionResult(
             int jobId, 
             int printerId, 
             TTime incomingTime, 

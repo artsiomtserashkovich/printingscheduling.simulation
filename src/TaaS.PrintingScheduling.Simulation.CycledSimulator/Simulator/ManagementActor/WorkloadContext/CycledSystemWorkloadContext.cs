@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TaaS.PrintingScheduling.Simulation.Core.Scheduler;
+using TaaS.PrintingScheduling.Simulation.Core.Scheduler.Schedules;
 using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.CycledEngine.Context;
 using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.Jobs;
@@ -23,14 +24,14 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.Managemen
         
         public ICycledJob? ScheduledNewJob(IPrinter printer)
         {
-            var nextJobSchedule = GetPrinterContext(printer).StartNextScheduledJob();
+            var nextJobSchedule = GetPrinterContext(printer.Id).StartNextScheduledJob();
             
             return nextJobSchedule != null ? new CycledJob(nextJobSchedule) : null;
         }
 
         public void CompleteCurrentJob(IPrinter printer)
         {
-            GetPrinterContext(printer).CompletedCurrentJob();
+            GetPrinterContext(printer.Id).CompletedCurrentJob();
         }
 
         public IReadOnlyCollection<IPrinterSchedulingState<long>> GetCurrentStates(ICycledSimulationContext cycledContext)
@@ -38,16 +39,19 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.Managemen
             return _contexts.Values.Select(context => context.GetCurrentState(cycledContext)).ToArray();
         }
 
-        public void ApplySchedulingResult(object result)
+        public void ApplySchedulingResult(IReadOnlyDictionary<int, IReadOnlyCollection<JobSchedule<long>>> results)
         {
-            
+            foreach (var (printerId, schedules) in results)
+            {
+                GetPrinterContext(printerId).ApplyRescheduling(schedules);
+            }
         }
 
-        private CycledPrinterWorkloadContext GetPrinterContext(IPrinter printer)
+        private CycledPrinterWorkloadContext GetPrinterContext(int printerId)
         {
-            return _contexts.TryGetValue(printer.Id, out var printerContext) 
+            return _contexts.TryGetValue(printerId, out var printerContext) 
                 ? printerContext 
-                : throw new ArgumentException($"Workload context doesn't contains printer with id: '{printer.Id}'.", nameof(printer));
+                : throw new ArgumentException($"Workload context doesn't contains printer with id: '{printerId}'.", nameof(printerId));
         }
     }
 }

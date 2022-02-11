@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using TaaS.PrintingScheduling.Simulation.Core.Specifications;
+using System.Linq;
 
 namespace TaaS.PrintingScheduling.Simulation.Core.PrintingResult
 {
     public class InMemoryResultsCollector<TTime> : IJobResultCollector<TTime>, IJobResultStorage<TTime> where TTime : struct
     {
-        private readonly List<JobExecutionResult<TTime>> _results = new List<JobExecutionResult<TTime>>();
+        private readonly List<JobExecutionResult<TTime>> _results = new();
         
         public void RegisterResult(JobExecutionResult<TTime> result)
         {
@@ -14,7 +14,7 @@ namespace TaaS.PrintingScheduling.Simulation.Core.PrintingResult
 
         public IReadOnlyCollection<JobExecutionResult<TTime>> GetResults()
         {
-            return _results;
+            return _results.OrderBy(result => result.JobId).ToArray();
         }
     }
 }
