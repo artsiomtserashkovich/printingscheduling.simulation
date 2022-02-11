@@ -120,13 +120,16 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Scheduler.PrioritizedScheduler
         
         private static PrioritizedJobSchedule<TTime> ChoseBestOption(IReadOnlyCollection<PrioritizedJobSchedule<TTime>> options)
         {
-            var coef = 0.5;
-            
             return options
-                .Select(option => (option, (coef * option.ResolutionPriority) + (1 - coef) * option.TimePriority))
-                .OrderByDescending(option => option.Item2)
+                .Select(option => (Option: option, Priority: CalculateOptionPriority(option)))
+                .OrderByDescending(option => option.Priority)
                 .FirstOrDefault()
-                .option;
+                .Option;
+        }
+
+        private static double CalculateOptionPriority(PrioritizedJobSchedule<TTime> option)
+        {
+            return (option.Job.PriorityCoefficient * option.ResolutionPriority) + ((1 - option.Job.PriorityCoefficient) * option.TimePriority);
         }
     }
 }

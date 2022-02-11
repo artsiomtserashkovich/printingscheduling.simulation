@@ -13,6 +13,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\TaaS.PrintingScheduling.Simulation.CycledSimulator\TaaS.PrintingScheduling.Simulation.CycledSimulator.csproj" />
+      <ProjectReference Include="..\TaaS.PrintingScheduling.Simulation.WalltimeDashboard\TaaS.PrintingScheduling.Simulation.WalltimeDashboard.csproj" />
     </ItemGroup>
 
 </Project>

@@ -7,27 +7,22 @@ namespace TaaS.PrintingScheduling.Simulation.Core.PrintingResult
     public class JobExecutionResult<TTime> where TTime : struct
     {
         public JobExecutionResult(
-            int jobId, 
-            int printerId, 
-            TTime incomingTime, 
+            JobSpecification<TTime> job, 
+            PrinterSpecification printer,
             TimeSlot<TTime> scheduledTime, 
             TimeSlot<TTime> executionTime)
         {
-            JobId = jobId;
-            PrinterId = printerId;
-            IncomingTime = incomingTime;
+            Job = job;
+            Printer = printer;
             ScheduledTime = scheduledTime;
             ExecutionTime = executionTime;
         }
         
-        [JsonPropertyName("jobId")]
-        public int JobId { get; }
+        [JsonPropertyName("job")]
+        public JobSpecification<TTime> Job { get; }
         
-        [JsonPropertyName("printerId")]
-        public int PrinterId { get; }
-        
-        [JsonPropertyName("incoming")]
-        public TTime IncomingTime { get; }
+        [JsonPropertyName("printer")]
+        public PrinterSpecification Printer { get; }
 
         [JsonPropertyName("scheduleTimeSlot")]
         public TimeSlot<TTime> ScheduledTime { get; }

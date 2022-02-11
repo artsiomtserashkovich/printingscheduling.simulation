@@ -29,8 +29,7 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.PrinterAc
         {
             if (_currentJob?.IsComplete ?? false)
             {
-                var result = _currentJob.GetResultReport(_specification);
-                _printingSystem.RegisterFinishedJob(this, result);
+                _printingSystem.RegisterFinishedJob(this, _currentJob.GetResultReport());
             }
             if (_currentJob == null || _currentJob.IsComplete)
             {

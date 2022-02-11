@@ -1,6 +1,5 @@
 ﻿using System;
 using TaaS.PrintingScheduling.Simulation.Core.PrintingResult;
-using TaaS.PrintingScheduling.Simulation.Core.Scheduler;
 using TaaS.PrintingScheduling.Simulation.Core.Scheduler.Schedules;
 using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.CycledEngine.Context;
@@ -24,12 +23,12 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.Jobs
 
         public JobSpecification<long> Specification => _jobSchedule.Job;
         
-        public JobExecutionResult<long> GetResultReport(PrinterSpecification printer)
+        public JobExecutionResult<long> GetResultReport()
         {
             if (!IsComplete)
             {
                 throw new InvalidOperationException(
-                    $"Not able to generate result report for job with id: '{printer.Id}'. Job isn't completed.");
+                    $"Not able to generate result report for job with id: '{_jobSchedule.Job.Id}'. Job isn't completed.");
             }
             if (_executionStartTime == null || _executionFinishTime == null)
             {
@@ -41,9 +40,8 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.Jobs
             var executionTimeSlot = new TimeSlot<long>(_executionStartTime.Value, _executionFinishTime.Value);
 
             return new JobExecutionResult<long>(
-                Specification.Id, 
-                printer.Id, 
-                Specification.IncomingTime, 
+                _jobSchedule.Job,
+                _jobSchedule.Printer,
                 scheduledTimeSlot, 
                 executionTimeSlot);
         }

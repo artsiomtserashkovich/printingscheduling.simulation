@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace TaaS.PrintingScheduling.Simulation.Core.PrintingResult
 {
@@ -14,7 +13,7 @@ namespace TaaS.PrintingScheduling.Simulation.Core.PrintingResult
 
         public IReadOnlyCollection<JobExecutionResult<TTime>> GetResults()
         {
-            return _results.OrderBy(result => result.JobId).ToArray();
+            return _results;
         }
     }
 }

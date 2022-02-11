@@ -1,5 +1,6 @@
 ﻿using System;
 using TaaS.PrintingScheduling.Simulation.CycledSimulator.Builders;
+using TaaS.PrintingScheduling.Simulation.WalltimeDashboard;
 
 namespace TaaS.PrintingScheduling.Simulation.ConsoleTool
 {
@@ -9,8 +10,10 @@ namespace TaaS.PrintingScheduling.Simulation.ConsoleTool
         {
             var reader = new CsvSimulationDataReader();
 
-            var printers = reader.ReadPrinters("B:\\homeproject\\projects\\TaaS.PrintingScheduling.Simulation\\data\\case_2(incomingv2)\\printers.csv");
-            var jobs = reader.ReadJobs("B:\\homeproject\\projects\\TaaS.PrintingScheduling.Simulation\\data\\case_2(incomingv2)\\jobs.csv");
+            var folderPath = "B:\\homeproject\\projects\\TaaS.PrintingScheduling.Simulation\\data\\case_5\\";
+            
+            var printers = reader.ReadPrinters(folderPath + "printers.csv");
+            var jobs = reader.ReadJobs(folderPath + "jobs.csv");
             
             var results = new CycleSimulationEngineBuilder()
                 .WithPrinters(printers)
@@ -24,17 +27,17 @@ namespace TaaS.PrintingScheduling.Simulation.ConsoleTool
             foreach (var result in results)
             {
                 Console.WriteLine(
-                    $"finishJob:'{result.JobId}'; " +
-                    $"printer:'{result.PrinterId}'; " +
-                    $"incoming:'{result.IncomingTime}'; " +
+                    $"finishJob:'{result.Job.Id}'; " +
+                    $"printer:'{result.Printer.Id}'; " +
+                    $"incoming:'{result.Job.Dimension}'; " +
                     $"executionStartTime:'{result.ExecutionTime.Start}'; " +
                     $"executionFinishTime:'{result.ExecutionTime.Finish}'; " +
                     $"scheduledStartTime:'{result.ScheduledTime.Start}'; " +
                     $"scheduledFinishTime:'{result.ScheduledTime.Finish}'.");
                 
             }
-            var json = System.Text.Json.JsonSerializer.Serialize(results);
-            Console.WriteLine(json);
+            
+            new ReportGenerator<long>().Generate(results, folderPath, "least");
         }
     }
 }

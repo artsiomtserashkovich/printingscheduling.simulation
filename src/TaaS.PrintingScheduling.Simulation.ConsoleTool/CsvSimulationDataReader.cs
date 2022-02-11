@@ -20,7 +20,8 @@ namespace TaaS.PrintingScheduling.Simulation.ConsoleTool
                     record.id,
                     record.resolution,
                     new Dimension(record.xdim, record.ydim, record.zdim),
-                    record.incoming))
+                    record.incoming,
+                    record.coef))
                 .ToArray();
         }
         
@@ -67,6 +68,8 @@ namespace TaaS.PrintingScheduling.Simulation.ConsoleTool
             public double zdim { get; set;}
 
             public long incoming { get; set;}
+            
+            public double coef { get; set;}
         }
     }
 }
