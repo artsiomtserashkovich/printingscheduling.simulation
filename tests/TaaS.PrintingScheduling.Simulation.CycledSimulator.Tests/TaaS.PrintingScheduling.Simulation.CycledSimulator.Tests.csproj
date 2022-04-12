@@ -16,7 +16,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\TaaS.PrintingScheduling.Simulation.CycledSimulator\TaaS.PrintingScheduling.Simulation.CycledSimulator.csproj" />
+      <ProjectReference Include="..\..\src\TaaS.PrintingScheduling.Simulation.Cycled\TaaS.PrintingScheduling.Simulation.Cycled.csproj" />
+      <ProjectReference Include="..\TaaS.PrintingScheduling.Simulation.Tests.Shared\TaaS.PrintingScheduling.Simulation.Tests.Shared.csproj" />
     </ItemGroup>
 
 </Project>

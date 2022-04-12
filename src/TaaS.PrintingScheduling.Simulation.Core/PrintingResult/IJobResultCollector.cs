@@ -7,9 +7,4 @@ namespace TaaS.PrintingScheduling.Simulation.Core.PrintingResult
     {
         void RegisterResult(JobExecutionResult<TTime> result);
     }
-    
-    public interface IJobResultStorage<TTime> where TTime : struct
-    {
-        IReadOnlyCollection<JobExecutionResult<TTime>> GetResults();
-    }
 }

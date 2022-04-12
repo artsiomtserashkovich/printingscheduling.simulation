@@ -17,4 +17,8 @@
       <ProjectReference Include="..\..\src\TaaS.PrintingScheduling.Simulation.Core\TaaS.PrintingScheduling.Simulation.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Scheduler" />
+    </ItemGroup>
+
 </Project>

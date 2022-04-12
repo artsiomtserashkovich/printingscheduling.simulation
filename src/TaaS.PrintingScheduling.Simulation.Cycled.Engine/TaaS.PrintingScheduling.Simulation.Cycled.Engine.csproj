@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem\TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.csproj" />
+      <ProjectReference Include="..\TaaS.PrintingScheduling.Simulation.Cycled.PrinterActor\TaaS.PrintingScheduling.Simulation.Cycled.PrinterActor.csproj" />
+    </ItemGroup>
+
+</Project>

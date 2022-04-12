@@ -53,7 +53,7 @@ namespace TaaS.PrintingScheduling.Simulation.Core.Specifications
         
         public static bool operator >(Dimension left, Dimension right)
         {
-            return (left.X >= right.X) && (left.Y >= right.Y) && (left.Z >= right.Z) && left != right;
+            return (left.X >= right.X) || (left.Y >= right.Y) || (left.Z >= right.Z) && left != right;
         }
         
         public bool Equals(Dimension other)

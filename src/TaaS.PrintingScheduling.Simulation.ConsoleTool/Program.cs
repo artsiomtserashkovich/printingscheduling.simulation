@@ -20,7 +20,6 @@ namespace TaaS.PrintingScheduling.Simulation.ConsoleTool
                 .WithPrintingSystem(builder => builder
                     .WithLeastFinishTimeScheduler()
                     .WithIncomingJobs(jobs))
-                
                 .Build()
                     .Simulate();
 
