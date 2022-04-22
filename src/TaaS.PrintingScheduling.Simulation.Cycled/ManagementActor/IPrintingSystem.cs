@@ -1,12 +1,11 @@
-﻿using TaaS.PrintingScheduling.Simulation.Cycled.Jobs;
-using TaaS.PrintingScheduling.Simulation.Cycled.PrinterActor;
+﻿using TaaS.PrintingScheduling.Simulation.Cycled.PrinterActor;
 
 namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementActor
 {
-    public interface IPrintingSystem
+    public interface IPrintingSystem<TTime> where TTime : struct
     {
         void RegisterFinishedJob(IPrinter printer);
-        
-        ICycledJob? ScheduleNextJob(IPrinter printer);
+
+        IPrintingJobExecutable<TTime>? ScheduleNextJob(IPrinter printer);
     }
 }

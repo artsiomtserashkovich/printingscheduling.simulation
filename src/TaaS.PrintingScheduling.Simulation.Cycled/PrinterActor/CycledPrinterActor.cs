@@ -1,20 +1,20 @@
-﻿using System;
+﻿using TaaS.PrintingScheduling.Simulation.Core.PrintingResult;
 using TaaS.PrintingScheduling.Simulation.Core.Specifications;
-using TaaS.PrintingScheduling.Simulation.Cycled.Jobs;
+using TaaS.PrintingScheduling.Simulation.Cycled.Context;
 using TaaS.PrintingScheduling.Simulation.Cycled.ManagementActor;
 
 namespace TaaS.PrintingScheduling.Simulation.Cycled.PrinterActor
 {
     public class CycledPrinterActor : IPrinter, ICycledPrinterActor
     {
-        private readonly IPrintingSystem _printingSystem;
+        private readonly IPrintingSystem<long> _printingSystem;
         private readonly PrinterSpecification _specification;
 
-        private ICycledJob? _currentJob = null;
+        private IPrintingJobExecutable<long>? _currentJob = null;
         
         public CycledPrinterActor(
             PrinterSpecification specification,
-            IPrintingSystem printingSystem)
+            IPrintingSystem<long> printingSystem)
         {
             _specification = specification;
             _printingSystem = printingSystem;
@@ -24,14 +24,8 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.PrinterActor
         
         private bool IsFree => _currentJob == null;
 
-        public void ExecuteCycle()
+        public void ExecuteCycle(ICycledSimulationContext simulationContext)
         {
-            if (!IsFree && _currentJob.IsComplete)
-            {
-                _printingSystem.RegisterFinishedJob(this);
-                _currentJob = null;
-            }
-            
             if (IsFree)
             {
                 var newIncomingJob = _printingSystem.ScheduleNextJob(this);
@@ -40,10 +34,31 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.PrinterActor
                 _currentJob = newIncomingJob;
             }
 
-            _currentJob?.Execute(_specification);
+            var result = _currentJob?.ExecuteIteration(_specification, simulationContext.CurrentCycle);
+            
+            if (result?.IsComplete ?? false)
+            {
+                if (result is CompletedPrintingIterationResult<long> completedResult)
+                {
+                    var executionResult = new JobExecutionResult<long>(
+                        _currentJob.Specification,
+                        _specification,
+                        completedResult.ScheduledTime,
+                        completedResult.ExecutionTime);
+                    
+                    simulationContext.RegisterResult(executionResult);
+                    _printingSystem.RegisterFinishedJob(this);
+                    
+                    _currentJob = null;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Not supported type of the result.");
+                }
+            }
         }
 
-        private void AssertIncomingJob(ICycledJob? job)
+        private void AssertIncomingJob(IPrintingJobExecutable<long>? job)
         {
             if (job != null && job.Specification.Dimension > _specification.PrintingDimension)
             {

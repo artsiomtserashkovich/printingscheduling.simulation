@@ -3,7 +3,6 @@ using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using NUnit.Framework;
-using TaaS.PrintingScheduling.Simulation.Cycled.Jobs;
 using TaaS.PrintingScheduling.Simulation.Cycled.ManagementActor;
 using TaaS.PrintingScheduling.Simulation.Cycled.PrinterActor;
 using TaaS.PrintingScheduling.Simulation.Tests.Shared.Builders;
@@ -59,7 +58,7 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Tests.Simulator.Pri
                     .WithY(100)
                     .WithZ(100))
                 .Build();
-            var jobMock = Substitute.For<ICycledJob>();
+            var jobMock = Substitute.For<IPrintingJobExecutable<>>();
             var systemMock = Substitute.For<IPrintingSystem>();
             jobMock.Specification.Returns(jobSpecification);
             jobMock.IsComplete.Returns(true);
@@ -90,7 +89,7 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Tests.Simulator.Pri
                     .WithY(100)
                     .WithZ(100))
                 .Build();
-            var jobMock = Substitute.For<ICycledJob>();
+            var jobMock = Substitute.For<IPrintingJobExecutable<>>();
             var systemMock = Substitute.For<IPrintingSystem>();
             jobMock.Specification.Returns(jobSpecification);
             systemMock.ScheduleNextJob(Arg.Is<IPrinter>(p => p.Id == 126)).Returns(jobMock, null);

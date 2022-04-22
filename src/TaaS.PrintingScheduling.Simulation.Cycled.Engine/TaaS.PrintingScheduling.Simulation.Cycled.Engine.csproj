@@ -7,8 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler\TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.csproj" />
       <ProjectReference Include="..\TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem\TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.csproj" />
-      <ProjectReference Include="..\TaaS.PrintingScheduling.Simulation.Cycled.PrinterActor\TaaS.PrintingScheduling.Simulation.Cycled.PrinterActor.csproj" />
     </ItemGroup>
 
 </Project>

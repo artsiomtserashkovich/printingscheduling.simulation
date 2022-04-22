@@ -4,8 +4,6 @@ using System.Linq;
 using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem;
 using TaaS.PrintingScheduling.Simulation.Cycled.PrinterActor;
-using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.CycledEngine;
-using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.ManagementActor;
 
 namespace TaaS.PrintingScheduling.Simulation.Cycled.Engine.Builders
 {

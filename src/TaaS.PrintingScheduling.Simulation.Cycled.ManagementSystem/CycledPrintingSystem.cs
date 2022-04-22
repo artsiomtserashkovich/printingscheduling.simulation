@@ -1,15 +1,13 @@
-﻿using System;
-using System.Linq;
-using TaaS.PrintingScheduling.Simulation.Cycled.Context;
+﻿using TaaS.PrintingScheduling.Simulation.Cycled.Context;
 using TaaS.PrintingScheduling.Simulation.Cycled.IncomingJobsQueue;
-using TaaS.PrintingScheduling.Simulation.Cycled.Jobs;
 using TaaS.PrintingScheduling.Simulation.Cycled.ManagementActor;
+using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Context;
 using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler;
 using TaaS.PrintingScheduling.Simulation.Cycled.PrinterActor;
 
 namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem
 {
-    public class CycledPrintingSystem : ICycledManagementActor, IPrintingSystem
+    public class CycledPrintingSystem : ICycledManagementActor, IPrintingSystem<long>
     {
         private readonly CycledSystemWorkloadContext _workloadContext;
         private readonly IIncomingJobsQueue _jobsQueue;
@@ -32,8 +30,8 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem
             var incomingJobs = _jobsQueue.Dequeue(cycledContext);
             if (incomingJobs.Any())
             {
-                var currentPrintersStates = _workloadContext.GetCurrentStates(cycledContext);
-                var schedulingResult = _jobsScheduler.Schedule(incomingJobs, currentPrintersStates);
+                var currentPrintersStates = _workloadContext.GetCurrentStates();
+                var schedulingResult = _jobsScheduler.Schedule(incomingJobs, currentPrintersStates, cycledContext.CurrentCycle);
 
                 if (schedulingResult.NotScheduled.Any())
                 {
@@ -48,12 +46,12 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem
         
         public void RegisterFinishedJob(IPrinter printer)
         {
-            _workloadContext.CompleteCurrentJob(printer);
+            _workloadContext.CompleteCurrentJob(printer.Id);
         }
 
-        public ICycledJob? ScheduleNextJob(IPrinter printer)
+        public IPrintingJobExecutable<long>? ScheduleNextJob(IPrinter printer)
         {
-            return _workloadContext.ScheduledNewJob(printer);
+            return _workloadContext.ScheduledNewJob(printer.Id);
         }
     }
 }

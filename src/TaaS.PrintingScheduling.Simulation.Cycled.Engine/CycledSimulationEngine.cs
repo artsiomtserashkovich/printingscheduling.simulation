@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
 using TaaS.PrintingScheduling.Simulation.Core.PrintingResult;
 using TaaS.PrintingScheduling.Simulation.Cycled.Context;
-using TaaS.PrintingScheduling.Simulation.Cycled.Engine;
 using TaaS.PrintingScheduling.Simulation.Cycled.ManagementActor;
 using TaaS.PrintingScheduling.Simulation.Cycled.PrinterActor;
-using TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.ManagementActor;
 
-namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.CycledEngine
+namespace TaaS.PrintingScheduling.Simulation.Cycled.Engine
 {
     public class CycledSimulationEngine : ISimulationEngine
     {
@@ -30,7 +28,7 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Simulator.CycledEng
                 _managementActor.ExecuteCycle(executionContext);
                 foreach (var worker in _printerActors)
                 {
-                    worker.ExecuteCycle();
+                    worker.ExecuteCycle(executionContext);
                 }
                 
                 executionContext.NextCycle();

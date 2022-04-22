@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using TaaS.PrintingScheduling.Simulation.Cycled.Jobs;
 using TaaS.PrintingScheduling.Simulation.Tests.Shared.Builders;
 
 namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Tests.Simulator.Jobs
@@ -18,7 +17,7 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Tests.Simulator.Job
                     .WithZ(50)
                     .Build())
                 .Build();
-            var sut = new CycledJob(specification);
+            var sut = new CycledPrintingJobExecutable(specification);
 
             sut.Specification.Should().Be(specification);
         }
@@ -38,7 +37,7 @@ namespace TaaS.PrintingScheduling.Simulation.CycledSimulator.Tests.Simulator.Job
                 .WithPrintingSpeed(20)
                 .WithResolution(0.4)
                 .Build();
-            var sut = new CycledJob(specification);
+            var sut = new CycledPrintingJobExecutable(specification);
 
             sut.Execute(printerSpecification);
             sut.IsComplete.Should().BeFalse();

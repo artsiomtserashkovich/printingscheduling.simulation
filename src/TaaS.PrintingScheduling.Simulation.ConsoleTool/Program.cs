@@ -1,5 +1,5 @@
 ﻿using System;
-using TaaS.PrintingScheduling.Simulation.CycledSimulator.Builders;
+using TaaS.PrintingScheduling.Simulation.Cycled.Engine.Builders;
 using TaaS.PrintingScheduling.Simulation.WalltimeDashboard;
 
 namespace TaaS.PrintingScheduling.Simulation.ConsoleTool
@@ -10,15 +10,15 @@ namespace TaaS.PrintingScheduling.Simulation.ConsoleTool
         {
             var reader = new CsvSimulationDataReader();
 
-            var folderPath = "B:\\homeproject\\projects\\TaaS.PrintingScheduling.Simulation\\data\\case_5\\";
+            var folderPath = "B:\\homeproject\\projects\\TaaS.PrintingScheduling.Simulation\\data\\case_6\\";
             
             var printers = reader.ReadPrinters(folderPath + "printers.csv");
             var jobs = reader.ReadJobs(folderPath + "jobs.csv");
-            
+             
             var results = new CycleSimulationEngineBuilder()
                 .WithPrinters(printers)
                 .WithPrintingSystem(builder => builder
-                    .WithLeastFinishTimeScheduler()
+                    .WithFixBoundTimeScheduler()
                     .WithIncomingJobs(jobs))
                 .Build()
                     .Simulate();
@@ -36,7 +36,7 @@ namespace TaaS.PrintingScheduling.Simulation.ConsoleTool
                 
             }
             
-            new ReportGenerator<long>().Generate(results, folderPath, "least");
+            new ReportGenerator<long>().Generate(results, folderPath, "fixbound");
         }
     }
 }
