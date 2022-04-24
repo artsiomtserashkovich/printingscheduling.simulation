@@ -2,7 +2,7 @@
 using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Context;
 using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.SchedulingProfile.Queue;
 
-namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.FixedBoundTime.SchedulingContext
+namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.SchedulingContext
 {
     public abstract class PrinterSchedulingContext<TTime> : IPrinterSchedulingState<TTime> 
         where TTime : struct
@@ -41,8 +41,8 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.F
         {
             SchedulesQueue.Enqueue(schedule);
 
-            var jonDuration = schedule.ScheduleTimeSlot.Finish - schedule.ScheduleTimeSlot.Start;
-            NextAvailableTime += jonDuration;
+            var jonDuration = schedule.TimeSlot.Finish - schedule.TimeSlot.Start;
+            NextAvailableTime += (jonDuration + 1);
         }
     }
 }

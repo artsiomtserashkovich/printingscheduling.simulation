@@ -11,15 +11,15 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem
     {
         private readonly CycledSystemWorkloadContext _workloadContext;
         private readonly IIncomingJobsQueue _jobsQueue;
-        private readonly IJobsScheduler<long> _jobsScheduler;
+        private readonly IJobScheduler<long> _jobScheduler;
 
         public CycledPrintingSystem(
             IIncomingJobsQueue jobsQueue,
-            IJobsScheduler<long> jobsScheduler,
+            IJobScheduler<long> jobScheduler,
             CycledSystemWorkloadContext workloadContext)
         {
             _jobsQueue = jobsQueue;
-            _jobsScheduler = jobsScheduler;
+            _jobScheduler = jobScheduler;
             _workloadContext = workloadContext;
         }
 
@@ -27,20 +27,18 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem
         
         public void ExecuteCycle(ICycledSimulationContext cycledContext)
         {
-            var incomingJobs = _jobsQueue.Dequeue(cycledContext);
-            if (incomingJobs.Any())
+            var incomingJob = _jobsQueue.Dequeue(cycledContext);
+            if (incomingJob != null)
             {
                 var currentPrintersStates = _workloadContext.GetCurrentStates();
-                var schedulingResult = _jobsScheduler.Schedule(incomingJobs, currentPrintersStates, cycledContext.CurrentCycle);
+                var schedulingResult = _jobScheduler.Schedule(incomingJob, currentPrintersStates, cycledContext.CurrentCycle);
 
-                if (schedulingResult.NotScheduled.Any())
+                if (!schedulingResult.IsScheduled)
                 {
-                    var stringIds = string.Join(',', schedulingResult.NotScheduled.Select(j => j.Id));
-                    
-                    throw new InvalidOperationException($"Jobs weren't scheduled. Jobs ids: '{stringIds}'.");
+                    throw new InvalidOperationException($"Job was't scheduled. Job id: '{incomingJob.Specification.Id}'.");
                 }
 
-                _workloadContext.ApplySchedulingResult(schedulingResult.Scheduled);
+                _workloadContext.ApplySchedulingResult(schedulingResult.ChangedStates);
             }
         }
         

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using TaaS.PrintingScheduling.Simulation.Core.Specifications;
+﻿using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 using TaaS.PrintingScheduling.Simulation.Cycled.Context;
 
 namespace TaaS.PrintingScheduling.Simulation.Cycled.IncomingJobsQueue
@@ -8,7 +7,6 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.IncomingJobsQueue
     {
         public bool IsContainsJobs { get; } 
         
-        public IReadOnlyCollection<JobSpecification<long>> Dequeue(
-            ICycledSimulationContext cycledContext);
+        public PrintingJob<long>? Dequeue(ICycledSimulationContext cycledContext);
     }
 }

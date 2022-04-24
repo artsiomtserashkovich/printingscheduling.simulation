@@ -1,20 +1,30 @@
-﻿using TaaS.PrintingScheduling.Simulation.Core.Specifications;
-using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Context;
+﻿using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Context;
 
 namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler
 {
     public class SchedulingResult<TTime> where TTime : struct
     {
-        public SchedulingResult(
-            IReadOnlyDictionary<int, IReadOnlySchedulesQueue<TTime>> scheduled,
-            IEnumerable<JobSpecification<TTime>>? notScheduled = null)
+        private SchedulingResult(
+            bool isScheduled, 
+            IReadOnlyDictionary<int, IReadOnlySchedulesQueue<TTime>> changedStates)
         {
-            Scheduled = scheduled;
-            NotScheduled = notScheduled?.ToArray() ?? Array.Empty<JobSpecification<TTime>>();
+            IsScheduled = isScheduled;
+            ChangedStates = changedStates;
+        }
+        
+        public bool IsScheduled { get; }
+
+        public IReadOnlyDictionary<int, IReadOnlySchedulesQueue<TTime>> ChangedStates { get; }
+
+        public static SchedulingResult<TTime> NotScheduled()
+        {
+            return new SchedulingResult<TTime>(false, new Dictionary<int, IReadOnlySchedulesQueue<TTime>>());
         }
 
-        public IReadOnlyDictionary<int, IReadOnlySchedulesQueue<TTime>> Scheduled { get; }
-        
-        public IReadOnlyCollection<JobSpecification<TTime>> NotScheduled { get; }
+        public static SchedulingResult<TTime> Scheduled(
+            IReadOnlyDictionary<int, IReadOnlySchedulesQueue<TTime>> changedStates)
+        {
+            return new SchedulingResult<TTime>(true, changedStates);
+        }
     }
 }

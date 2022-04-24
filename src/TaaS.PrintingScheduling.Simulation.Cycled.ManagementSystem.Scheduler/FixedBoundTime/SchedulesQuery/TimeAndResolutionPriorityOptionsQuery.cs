@@ -1,9 +1,10 @@
 ﻿using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.FixedBoundTime.LeastFinishTime;
-using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.FixedBoundTime.SchedulingContext;
 using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.FixedBoundTime.TimeAndResolutionPrioritized;
 using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.PrioritizedScheduler.PriorityCalculation.Resolution;
 using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.PrioritizedScheduler.PriorityCalculation.Time;
+using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.ScheduleOptions;
+using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.SchedulingContext;
 
 namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.FixedBoundTime.SchedulesQuery
 {
@@ -27,7 +28,7 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.F
 
         public IReadOnlyCollection<PrioritizedScheduleOption<TTime>> GetOptions(
             IEnumerable<IPrinterSchedulingState<TTime>> states, 
-            JobSpecification<TTime> job)
+            PrintingJob<TTime> job)
         {
             var options = _optionsQuery.GetOptions(states, job);
 
@@ -39,11 +40,11 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.F
 
             return options
                 .Select(schedule => 
-                    GetPrioritizedScheduleOption(schedule, minFinishTime, maxFinishTime, minResolution, maxResolution))
+                    CalculatePriority(schedule, minFinishTime, maxFinishTime, minResolution, maxResolution))
                 .ToArray();
         }
 
-        private PrioritizedScheduleOption<TTime> GetPrioritizedScheduleOption(
+        private PrioritizedScheduleOption<TTime> CalculatePriority(
             ScheduleOption<TTime> option,
             TTime minFinishTime, 
             TTime maxFinishTime, 
@@ -56,7 +57,7 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.F
             var calculatorParameters = new ResolutionPriorityParameters(
                 minResolution,
                 maxResolution,
-                option.Job.Resolution,
+                option.Job.Specification.Resolution,
                 option.Printer.Resolution);
             
             var resolutionPriority = _resolutionPriorityCalculator.Calculate(calculatorParameters);

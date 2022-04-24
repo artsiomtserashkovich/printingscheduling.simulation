@@ -1,4 +1,6 @@
-﻿namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.FixedBoundTime.TimeAndResolutionPrioritized
+﻿using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.ScheduleOptions;
+
+namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.FixedBoundTime.TimeAndResolutionPrioritized
 {
     public class BestPriorityOptionChooser<TTime> : IPrioritizedScheduleOptionChooser<TTime> where TTime : struct
     {
@@ -13,7 +15,8 @@
 
         private static double CalculateOptionPriority(PrioritizedScheduleOption<TTime> option)
         {
-            return (option.Job.PriorityCoefficient * option.ResolutionPriority) + ((1 - option.Job.PriorityCoefficient) * option.TimePriority);
+            return (option.Job.Specification.PriorityCoefficient * option.ResolutionPriority) 
+                   + ((1 - option.Job.Specification.PriorityCoefficient) * option.TimePriority);
         }
     } 
 }

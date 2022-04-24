@@ -1,9 +1,11 @@
-﻿using TaaS.PrintingScheduling.Simulation.Core.SchedulingPolicy;
-using TaaS.PrintingScheduling.Simulation.Core.Specifications;
-using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.FixedBoundTime.SchedulingContext;
+﻿using TaaS.PrintingScheduling.Simulation.Core.Specifications;
+using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.FixedBoundTime.LeastFinishTime;
+using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.ScheduleOptions;
+using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.SchedulingContext;
+using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.SchedulingPolicy;
 using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.TimeSlotCalculator;
 
-namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.FixedBoundTime.LeastFinishTime;
+namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.FixedBoundTime.SchedulesQuery;
 
 public class PolicyScheduleOptionsQuery<TTime> : IScheduleOptionsQuery<TTime>
     where TTime : struct
@@ -19,19 +21,19 @@ public class PolicyScheduleOptionsQuery<TTime> : IScheduleOptionsQuery<TTime>
 
     public IReadOnlyCollection<ScheduleOption<TTime>> GetOptions(
         IEnumerable<IPrinterSchedulingState<TTime>> states,
-        JobSpecification<TTime> job)
+        PrintingJob<TTime> job)
     {
         return states
-            .Where(state => _schedulingPolicy.IsAllowed(state.Printer, job))
             .Select(state => GetScheduleOption(state, job))
+            .Where(option => _schedulingPolicy.IsAllowed(option))
             .ToArray();
     }
 
     private ScheduleOption<TTime> GetScheduleOption(
         IPrinterSchedulingState<TTime> context,
-        JobSpecification<TTime> job)
+        PrintingJob<TTime> job)
     {
-        var timeSlot = _timeSlotCalculator.Calculate(context.Printer, job, context.NextAvailableTime);
+        var timeSlot = _timeSlotCalculator.Calculate(context.Printer, job.Specification, context.NextAvailableTime);
 
         return new ScheduleOption<TTime>(context.Printer, job, timeSlot);
     }

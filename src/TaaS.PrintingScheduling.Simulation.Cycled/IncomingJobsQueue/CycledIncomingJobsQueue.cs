@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
-using TaaS.PrintingScheduling.Simulation.Core.Specifications;
+﻿using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 using TaaS.PrintingScheduling.Simulation.Cycled.Context;
 
 namespace TaaS.PrintingScheduling.Simulation.Cycled.IncomingJobsQueue
 {
     public class CycledIncomingJobsQueue : IIncomingJobsQueue
     {
+        // days * hrs * min * sec
+        private const long MaxTimeInSystem = 8 * 24 * 60 * 60;
         private readonly PriorityQueue<JobSpecification<long>, long> _jobs;
 
         public CycledIncomingJobsQueue(PriorityQueue<JobSpecification<long>, long> jobs)
@@ -15,15 +16,15 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.IncomingJobsQueue
 
         public bool IsContainsJobs => _jobs.Count != 0;
         
-        public IReadOnlyCollection<JobSpecification<long>> Dequeue(ICycledSimulationContext cycledContext)
+        public PrintingJob<long>? Dequeue(ICycledSimulationContext cycledContext)
         {
-            var batch = new List<JobSpecification<long>>();
-            while (IsContainsJobs && _jobs.Peek().IncomingTime <= cycledContext.CurrentCycle)
+            if (_jobs.Count != 0 && _jobs.Peek().IncomingTime <= cycledContext.CurrentCycle)
             {
-                batch.Add(_jobs.Dequeue());
+                var job = _jobs.Dequeue();
+                return new PrintingJob<long>(job, job.IncomingTime + MaxTimeInSystem);
             }
-            
-            return batch;
+
+            return null;
         }
     }
 }

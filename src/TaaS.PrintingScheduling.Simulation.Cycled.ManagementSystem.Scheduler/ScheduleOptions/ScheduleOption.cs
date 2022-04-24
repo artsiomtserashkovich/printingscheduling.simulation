@@ -1,18 +1,18 @@
 ﻿using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 
-namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.FixedBoundTime.LeastFinishTime
+namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.ScheduleOptions
 {
-    public struct ScheduleOption<TTime> where TTime : struct
+    public class ScheduleOption<TTime> where TTime : struct
     {
         public PrinterSpecification Printer { get; }
         
-        public JobSpecification<TTime> Job { get; }
+        public PrintingJob<TTime> Job { get; }
         
         public TimeSlot<TTime> TimeSlot { get; }
 
         public ScheduleOption(
             PrinterSpecification printer,
-            JobSpecification<TTime> job,
+            PrintingJob<TTime> job,
             TimeSlot<TTime> timeSlot)
         {
             Printer = printer;

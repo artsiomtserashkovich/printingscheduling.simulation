@@ -10,8 +10,4 @@
       <ProjectReference Include="..\TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem\TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="SlackBased" />
-    </ItemGroup>
-
 </Project>

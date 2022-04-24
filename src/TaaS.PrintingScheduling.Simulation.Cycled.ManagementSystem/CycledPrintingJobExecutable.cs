@@ -16,7 +16,7 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem
             _remainingVolume = Specification.Dimension.Volume;
         }
 
-        public JobSpecification<long> Specification => _schedule.Job;
+        public JobSpecification<long> Specification => _schedule.Job.Specification;
         
         public PrintingJobIterationResult ExecuteIteration(PrinterSpecification printer, long executionTime)
         {
@@ -35,7 +35,7 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem
 
             return _remainingVolume == 0
                 ? new CompletedPrintingIterationResult<long>(
-                    _schedule.ScheduleTimeSlot,
+                    _schedule.TimeSlot,
                     new TimeSlot<long>(_startExecutionTime.Value, executionTime))
                 : new NotCompletePrintingIterationResult(_remainingVolume);
         }

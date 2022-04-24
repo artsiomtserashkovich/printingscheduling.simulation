@@ -1,6 +1,6 @@
 ﻿using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 
-namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.FixedBoundTime.SchedulingContext
+namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.SchedulingContext
 {
     public interface IPrinterSchedulingState<out TTime> where TTime : struct
     {

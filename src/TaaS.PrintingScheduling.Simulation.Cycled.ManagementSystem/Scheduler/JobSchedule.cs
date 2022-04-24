@@ -4,14 +4,14 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler
 {
     public class JobSchedule<TTime> where TTime : struct
     {
-        public JobSpecification<TTime> Job { get; }
+        public PrintingJob<TTime> Job { get; }
 
-        public TimeSlot<TTime> ScheduleTimeSlot { get; }
+        public TimeSlot<TTime> TimeSlot { get; }
 
-        public JobSchedule(JobSpecification<TTime> job, TimeSlot<TTime> scheduleTimeSlot)
+        public JobSchedule(PrintingJob<TTime> job, TimeSlot<TTime> timeSlot)
         {
             Job = job;
-            ScheduleTimeSlot = scheduleTimeSlot;
+            TimeSlot = timeSlot;
         }
     }
 }

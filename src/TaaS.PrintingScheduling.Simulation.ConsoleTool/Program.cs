@@ -18,7 +18,7 @@ namespace TaaS.PrintingScheduling.Simulation.ConsoleTool
             var results = new CycleSimulationEngineBuilder()
                 .WithPrinters(printers)
                 .WithPrintingSystem(builder => builder
-                    .WithFixBoundTimeScheduler()
+                    .WithLeastFinishTimeScheduler()
                     .WithIncomingJobs(jobs))
                 .Build()
                     .Simulate();
@@ -36,7 +36,7 @@ namespace TaaS.PrintingScheduling.Simulation.ConsoleTool
                 
             }
             
-            new ReportGenerator<long>().Generate(results, folderPath, "fixbound");
+            new ReportGenerator<long>().Generate(results, folderPath, "least2");
         }
     }
 }

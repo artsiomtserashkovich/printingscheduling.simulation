@@ -9,7 +9,7 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.Q
 
         public int Count => _queue.Count;
 
-        public long? LastEndTime => _queue.LastOrDefault()?.ScheduleTimeSlot.Finish;
+        public long? LastEndTime => _queue.LastOrDefault()?.TimeSlot.Finish;
 
         public CycleNoGapOverlapSafeQueue() : this(new Queue<JobSchedule<long>>())
         {
@@ -30,7 +30,7 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.Q
             var previous = _queue.LastOrDefault();
             if (previous != null)
             {
-                if ((previous.ScheduleTimeSlot.Finish + 1) != schedule.ScheduleTimeSlot.Start)
+                if ((previous.TimeSlot.Finish + 1) != schedule.TimeSlot.Start)
                 {
                     throw new InvalidOperationException("There is gap or overlap between last previous schedule and new schedule.");
                 }
