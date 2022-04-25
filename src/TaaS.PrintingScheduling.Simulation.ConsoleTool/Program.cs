@@ -18,7 +18,7 @@ namespace TaaS.PrintingScheduling.Simulation.ConsoleTool
             var results = new CycleSimulationEngineBuilder()
                 .WithPrinters(printers)
                 .WithPrintingSystem(builder => builder
-                    .WithLeastFinishTimeScheduler()
+                    .WithBackfillingScheduler()
                     .WithIncomingJobs(jobs))
                 .Build()
                     .Simulate();
@@ -28,7 +28,7 @@ namespace TaaS.PrintingScheduling.Simulation.ConsoleTool
                 Console.WriteLine(
                     $"finishJob:'{result.Job.Id}'; " +
                     $"printer:'{result.Printer.Id}'; " +
-                    $"incoming:'{result.Job.Dimension}'; " +
+                    $"incoming:'{result.Job.IncomingTime}'; " +
                     $"executionStartTime:'{result.ExecutionTime.Start}'; " +
                     $"executionFinishTime:'{result.ExecutionTime.Finish}'; " +
                     $"scheduledStartTime:'{result.ScheduledTime.Start}'; " +
@@ -36,7 +36,7 @@ namespace TaaS.PrintingScheduling.Simulation.ConsoleTool
                 
             }
             
-            new ReportGenerator<long>().Generate(results, folderPath, "least2");
+            new ReportGenerator<long>().Generate(results, folderPath, "backfilling");
         }
     }
 }

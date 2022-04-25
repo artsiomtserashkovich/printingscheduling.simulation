@@ -9,10 +9,5 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.S
         
         public PrinterSchedulingContext<TTime> CreateEmptyContext(
             PrinterExecutionState<TTime> state, TTime schedulingTime);
-        
-        public PrinterSchedulingContext<TTime> CreatePartiallyFilledContext(
-            PrinterExecutionState<TTime> state, 
-            TTime schedulingTime, 
-            IEnumerable<int> excludedJobsIds);
     }
 }

@@ -1,5 +1,5 @@
 ﻿using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Context;
-using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.Queue;
+using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.SchedulingContext.Queue;
 
 namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.SchedulingContext
 {
@@ -12,9 +12,9 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.S
             {
                 var nextAvailableTime = (state.CurrentJob?.TimeSlot.Finish + 1) ?? schedulingTime;
                 
-                return new CycledPrinterSchedulingContext(state.Printer, nextAvailableTime, new CycleNoGapOverlapSafeQueue());
+                return new CycledPrinterSchedulingContext(state.Printer, nextAvailableTime, new CycleDistinctNoGapOverlapSafeQueue());
             }
-            else if (state.SchedulesQueue is CycleNoGapOverlapSafeQueue queue)
+            else if (state.SchedulesQueue is CycleDistinctNoGapOverlapSafeQueue queue)
             {
                 var scheduledJobsFinishTime = (queue.LastEndTime ?? state.CurrentJob?.TimeSlot.Finish);
                 var nextAvailableTime = (scheduledJobsFinishTime + 1) ?? schedulingTime;
@@ -22,7 +22,7 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.S
                 return new CycledPrinterSchedulingContext(
                     state.Printer, 
                     nextAvailableTime, 
-                    CycleNoGapOverlapSafeQueue.Clone(queue));
+                    CycleDistinctNoGapOverlapSafeQueue.Clone(queue));
             }
             else
             {
@@ -39,7 +39,7 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.S
             return new CycledPrinterSchedulingContext(
                 state.Printer, 
                 nextAvailableTime,
-                new CycleNoGapOverlapSafeQueue());
+                new CycleDistinctNoGapOverlapSafeQueue());
         }
     }
 }

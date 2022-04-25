@@ -3,19 +3,18 @@ using TaaS.PrintingScheduling.Simulation.Cycled.IncomingJobsQueue;
 using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem;
 using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Context;
 using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler;
-using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.FixedBoundTime.LeastFinishTime;
-using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.FixedBoundTime.SchedulesQuery;
-using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.FixedBoundTime.TimeAndResolutionPrioritized;
-using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.PrioritizedScheduler.PriorityCalculation.Resolution;
-using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.PrioritizedScheduler.PriorityCalculation.Time;
-using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.PriorityCalculation.Time;
+using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.OptionsProfile.Choosers;
+using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.OptionsProfile.Queries.Backfilling;
+using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.OptionsProfile.Queries.FullRescheduling;
+using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.OptionsProfile.Queries.FullRescheduling.Factory;
+using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.ScheduleOptions.Choosers;
+using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.ScheduleOptions.Queries.Prioritized;
+using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.ScheduleOptions.Queries.Prioritized.PriorityCalculation.Resolution;
+using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.ScheduleOptions.Queries.Prioritized.PriorityCalculation.Time;
+using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.ScheduleOptions.Queries.Unprioritized;
+using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.ScheduleOptions.Queries.Unprioritized.SchedulingPolicy;
+using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.ScheduleOptions.Queries.Unprioritized.TimeSlotCalculator;
 using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.SchedulingContext;
-using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.SchedulingPolicy;
-using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.SlackBased;
-using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.SlackBased.ProfilesGeneration;
-using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.SlackBased.ProfilesGeneration.ProfilesTree;
-using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.SlackBased.ProfilesGeneration.ScheduleOption;
-using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.TimeSlotCalculator;
 
 namespace TaaS.PrintingScheduling.Simulation.Cycled.Engine.Builders
 {
@@ -43,53 +42,73 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.Engine.Builders
             return this;
         }
 
-        public CycledPrintingSystemBuilder WithLeastFinishTimeScheduler()
+        public CycledPrintingSystemBuilder WithUnprioritizedScheduler()
         {
-            _jobScheduler = new UnprioritizedJobScheduler<long>(
-                new PolicyScheduleOptionsQuery<long>(
+            _jobScheduler = new UnprioritizedAppendJobScheduler<long>(
+                new PolicyBasedOptionsQuery<long>(
                     new CycledTimeSlotCalculator(), 
                     new DeadlineTimePolicy(new NotFitDimensionsPolicy<long>(new WorseResolutionPolicy<long>()))),
-                new LeastFinishTimeOptionChooser<long>(),
+                new MinFinishTimeOptionChooser<long>(),
                 new CycledSchedulingContextFactory());
 
             return this;
         }
 
-        public CycledPrintingSystemBuilder WithFixBoundTimeScheduler(double resolutionThreshold = 0.2)
+        public CycledPrintingSystemBuilder WithPrioritizedScheduler(double resolutionThreshold = 0.2)
         {
-            _jobScheduler = new PrioritizedJobScheduler<long>(
+            _jobScheduler = new PrioritizedAppendJobScheduler<long>(
                 new CycledSchedulingContextFactory(),
-                new TimeAndResolutionPriorityOptionsQuery<long>(
-                    new PolicyScheduleOptionsQuery<long>(
+                new TimeScopedPrioritizedOptionsQuery<long>(
+                    new PolicyBasedOptionsQuery<long>(
                         new CycledTimeSlotCalculator(), 
                         new DeadlineTimePolicy(new NotFitDimensionsPolicy<long>())),
                     new LinearTimePriorityCalculator(),
                     new LinearResolutionPriorityCalculator(new ResolutionPriorityCalculatorOptions(resolutionThreshold))),
-                new BestPriorityOptionChooser<long>());
+                new MaxTotalPriorityOptionChooser<long>());
 
             return this;
         }
 
-        public CycledPrintingSystemBuilder WithSlackBasedScheduler(double resolutionThreshold = 0.2)
+        public CycledPrintingSystemBuilder WithFullReschedulingScheduler(double resolutionThreshold = 0.2)
         {
-            _jobScheduler = new FullReschedulingJobScheduler<long>(
+            _jobScheduler = new ProfilesBasedJobScheduler<long>(
                 new CycledSchedulingContextFactory(),
-                new ExecutionStatesJobsExtractor<long>(),
-                new PrioritizedScheduleProfilesQuery<long>(
-                    new CycledProfileTreeFactory(),
-                    new ProfileScheduleOptionsQuery<long>(
-                        new PolicyScheduleOptionsQuery<long>(
+                new TreeFullReschedulingProfilesQuery<long>(
+                    new CycledPrioritizedProfileNodeFactory(),
+                    new TimeUnscopedPrioritizedOptionsQuery<long>(
+                        new PolicyBasedOptionsQuery<long>(
                             new CycledTimeSlotCalculator(),
                             new DeadlineTimePolicy()),
                         new NotFitDimensionsPolicy<long>(),
                         new LinearResolutionPriorityCalculator(
                             new ResolutionPriorityCalculatorOptions(resolutionThreshold)),
                         new LinearTimePriorityCalculator())),
-                new PrioritizedProfilesChooser<long>());
+                new MaxTotalPriorityProfilesChooser<long>());
 
             return this;
         }
 
+        public CycledPrintingSystemBuilder WithBackfillingScheduler(double resolutionThreshold = 0.2)
+        {
+            _jobScheduler = new ProfilesBasedJobScheduler<long>(
+                new CycledSchedulingContextFactory(),
+                new BackfillingProfilesQuery<long>(
+                    new GenerateSequencesCommand<long>(),
+                    new CycledBackfillingProfileFactory(),
+                    new TimeUnscopedPrioritizedOptionsQuery<long>(
+                        new PolicyBasedOptionsQuery<long>(
+                            new CycledTimeSlotCalculator(),
+                            new DeadlineTimePolicy()),
+                        new NotFitDimensionsPolicy<long>(),
+                        new LinearResolutionPriorityCalculator(
+                            new ResolutionPriorityCalculatorOptions(resolutionThreshold)),
+                        new LinearTimePriorityCalculator()),
+                    new MaxTotalPriorityOptionChooser<long>()),
+                new MaxTotalPriorityProfilesChooser<long>());
+
+            return this;
+        }
+        
         public CycledPrintingSystem Build()
         {
             if (_jobsQueue == null)

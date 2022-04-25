@@ -13,6 +13,9 @@ namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.S
         public double TimePriority { get; }
         
         public double ResolutionPriority { get; }
+        
+        public double TotalPriority => (Job.Specification.PriorityCoefficient * ResolutionPriority) + 
+            ((1 - Job.Specification.PriorityCoefficient) * TimePriority);
 
         public PrioritizedScheduleOption(
             PrinterSpecification printer,

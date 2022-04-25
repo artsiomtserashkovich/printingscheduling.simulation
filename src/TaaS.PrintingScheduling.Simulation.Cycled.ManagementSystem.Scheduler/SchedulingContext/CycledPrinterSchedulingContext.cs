@@ -1,6 +1,6 @@
 ﻿using TaaS.PrintingScheduling.Simulation.Core.Specifications;
 using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Context;
-using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.SchedulingProfile.Queue;
+using TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.SchedulingContext.Queue;
 
 namespace TaaS.PrintingScheduling.Simulation.Cycled.ManagementSystem.Scheduler.SchedulingContext
 {
